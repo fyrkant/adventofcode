@@ -9,36 +9,23 @@ const testData = {
 };
 
 const doCalc = (
-  dir: "front" | "back",
-  [s, e]: [number, number],
-): [number, number] => {
-  const delta = Math.round((s === 0 ? e : e % s) / 2);
-  return dir === "front" ? [s, e - delta] : [s + delta, e];
-};
-
-assertEquals(doCalc("front", [0, 127]), [0, 63]);
-assertEquals(doCalc("front", [64, 95]), [64, 79]);
-assertEquals(doCalc("back", [0, 127]), [64, 127]);
-assertEquals(doCalc("back", [0, 127]), [64, 127]);
-assertEquals(doCalc("back", [0, 63]), [32, 63]);
-
-const getStuff = (
+  zeroString: string,
+  oneString: string,
   input: string,
-  start: [number, number],
-  frontString: string,
-) => {
-  return input.split("").reduce(([s, e], curr) => {
-    const x = doCalc(curr === frontString ? "front" : "back", [s, e]);
-    return x;
-  }, start)[0];
+): number => {
+  const binaryString = input.replaceAll(zeroString, "0").replaceAll(
+    oneString,
+    "1",
+  );
+  return parseInt(binaryString, 2);
 };
 
 const getRow = (input: string) => {
-  return getStuff(input, [0, 127], "F");
+  return doCalc("F", "B", input);
 };
 
 const getColumn = (input: string) => {
-  return getStuff(input, [0, 7], "L");
+  return doCalc("L", "R", input);
 };
 
 const getId = (input: string) => {
