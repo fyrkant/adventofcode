@@ -1,5 +1,6 @@
 import { data } from "./data/4.ts";
 import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
+import { ObjectKeys } from "./types.d.ts";
 
 const required = {
   byr: "Birth Year",
@@ -102,11 +103,6 @@ const validateKey = (key: keyof typeof required, input: string): boolean => {
       return true;
   }
 };
-
-type ObjectKeys<T> = T extends object ? (keyof T)[]
-  : T extends number ? []
-  : T extends Array<any> | string ? string[]
-  : never;
 
 const validatePassport = (pass: Partial<Record<string, string>>): boolean => {
   const keys = Object.keys(pass);
