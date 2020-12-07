@@ -44,7 +44,7 @@ assertEquals(
 
 const makeDataMap = (input: string): Map<string, Map<string, number>> => {
   const map = new Map<string, Map<string, number>>();
-  for (let line of input.split("\n")) {
+  for (const line of input.split("\n")) {
     map.set(...parseLine(line));
   }
 
@@ -89,7 +89,7 @@ const countBags = (
   let sum = 0;
 
   if (val) {
-    for (let [k, v] of val.entries()) {
+    for (const [k, v] of val.entries()) {
       sum += v * (1 + countBags(k, dataMap));
     }
   }

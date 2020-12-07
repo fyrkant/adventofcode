@@ -1,4 +1,4 @@
-export type ObjectKeys<T> = T extends object ? (keyof T)[]
+export type ObjectKeys<T> = T extends Record<string, unknown> ? (keyof T)[]
   : T extends number ? []
-  : T extends Array<any> | string ? string[]
+  : T extends Array<unknown> | string ? string[]
   : never;

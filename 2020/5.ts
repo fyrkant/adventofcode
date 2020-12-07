@@ -8,40 +8,17 @@ const testData = {
   "BBFFBBFRLL": { row: 102, column: 4, id: 820 },
 };
 
-const doCalc = (
-  zeroString: string,
-  oneString: string,
+const getId = (
   input: string,
 ): number => {
-  const binaryString = input.replaceAll(zeroString, "0").replaceAll(
-    oneString,
+  const binaryString = input.replaceAll(/(F|L)/g, "0").replaceAll(
+    /(B|R)/g,
     "1",
   );
   return parseInt(binaryString, 2);
 };
 
-const getRow = (input: string) => {
-  return doCalc("F", "B", input);
-};
-
-const getColumn = (input: string) => {
-  return doCalc("L", "R", input);
-};
-
-const getId = (input: string) => {
-  const row = getRow(input.slice(0, 7));
-  const column = getColumn(input.slice(7));
-  return row * 8 + column;
-};
-
-// assertEquals(getRow("FBFBBFF"), 44);
-assertEquals(getRow("BFFFBBF"), 70);
-assertEquals(getColumn("RRR"), 7);
-assertEquals(getColumn("RLL"), 4);
-
 (Object.keys(testData) as ObjectKeys<typeof testData>).map((key) => {
-  assertEquals(getRow(key.slice(0, 7)), testData[key].row);
-  assertEquals(getColumn(key.slice(7)), testData[key].column);
   assertEquals(getId(key), testData[key].id);
 });
 
