@@ -1,5 +1,6 @@
 import { data } from "./data/6.ts";
 import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
+import { unique } from "./utils.ts";
 
 const getArrayOfObjects = (input: string): string[][] => {
   const splat = input.split("\n");
@@ -25,12 +26,11 @@ const filterForAllHas = (x: string[][]) => {
   return x.map((v) => {
     return v.reduce((p, c) => {
       const splitCurr = c.split("");
-      return [
-        ...new Set([
-          ...p,
-          ...splitCurr.filter((x) => v.every((y) => y.includes(x))),
-        ]),
-      ];
+
+      return unique([
+        ...p,
+        ...splitCurr.filter((x) => v.every((y) => y.includes(x))),
+      ]);
     }, [] as string[]);
   });
 };
@@ -60,7 +60,9 @@ a
 a
 
 b`;
+
 const arr = getArrayOfObjects(data);
+
 console.log({
   count: getCount(filterForAllHas(arr)),
 });

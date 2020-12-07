@@ -1,34 +1,71 @@
 import { data } from "./data/7.ts";
 import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { getUnique } from "./utils.ts";
 
-const parseLine = (input: string): Record<string, Record<string, number>[]> => {
-  const [c, r] = input.split("bags contain");
-  const currentColor = c.trim();
-  const rest = r.trim();
-  const restNoDot = rest.slice(0, rest.length - 1);
+const getSplitLine = (input: string): [string, string] => {
+  const [start, end] = input.split("bags contain");
+  const color = start.trim();
+  const trimmedEnd = end.trim();
+  const rest = trimmedEnd.slice(0, trimmedEnd.length - 1);
 
-  if (restNoDot === "no other bags") {
-    return { [currentColor]: [] };
+  return [color, rest];
+};
+
+const getBagMap = (input: string): Map<string, number> => {
+  if (input === "no other bags") {
+    return new Map();
   } else {
-    const x = restNoDot.split(", ").map((c) => {
-      const [, count, x] = /^([0-9])+/.exec(c) || [];
+    const map = new Map<string, number>();
+
+    for (const c of input.split(", ")) {
+      const [, count] = /^([0-9])+/.exec(c) || [];
       const color = c.slice(c.indexOf(count) + 1, c.length - 4).trim();
 
-      return { [color]: parseInt(count, 10) };
-    });
-    return { [currentColor]: x };
+      map.set(color, parseInt(count, 10));
+    }
+
+    return map;
   }
+};
+
+const parseLine = (input: string): [string, Map<string, number>] => {
+  const [color, rest] = getSplitLine(input);
+
+  return [color, getBagMap(rest)];
 };
 
 assertEquals(
   parseLine("light red bags contain 1 bright white bag, 2 muted yellow bags."),
-  { "light red": [{ "bright white": 1 }, { "muted yellow": 2 }] },
+  ["light red", new Map([["bright white", 1], ["muted yellow", 2]])],
 );
 assertEquals(
   parseLine("faded blue bags contain no other bags."),
-  { "faded blue": [] },
+  ["faded blue", new Map()],
 );
+
+const makeDataMap = (input: string): Map<string, Map<string, number>> => {
+  const map = new Map<string, Map<string, number>>();
+  for (let line of input.split("\n")) {
+    map.set(...parseLine(line));
+  }
+
+  return map;
+};
+
+const searchColor = (
+  input: string,
+  dataMap: Map<string, Map<string, number>>,
+): Set<string> => {
+  const set = new Set<string>();
+
+  dataMap.delete(input);
+  for (const key of dataMap.keys()) {
+    const found = typeof dataMap.get(key)?.get(input) === "number";
+    if (found) {
+      [key, ...searchColor(key, dataMap).values()].forEach(set.add, set);
+    }
+  }
+  return set;
+};
 
 const testData =
   `light red bags contain 1 bright white bag, 2 muted yellow bags.
@@ -41,44 +78,23 @@ vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
 faded blue bags contain no other bags.
 dotted black bags contain no other bags.`;
 
-const makeData = (input: string) =>
-  input.split("\n").reduce((prev, line) => {
-    const x = parseLine(line);
-
-    return { ...prev, ...x };
-  }, {} as Record<string, Record<string, number>[]>);
-
-const searchColor = (
-  input: string,
-  data: Record<string, Record<string, number>[]>,
-): string[] => {
-  const xs = Object.keys(data).reduce((prev, key) => {
-    const found = data[key].find((x) => typeof x[input] === "number");
-    if (found) {
-      const { [key]: r, ...restData } = data;
-      return [...prev, key, ...searchColor(key, restData)];
-    }
-    return prev;
-  }, [] as string[]);
-
-  return getUnique(xs);
-};
+assertEquals(searchColor("shiny gold", makeDataMap(testData)).size, 4);
+assertEquals(searchColor("shiny gold", makeDataMap(data)).size, 126);
 
 const countBags = (
   searchInput: string,
-  data: Record<string, Record<string, number>[]>,
+  dataMap: Map<string, Map<string, number>>,
 ): number => {
-  const { [searchInput]: f, ...restData } = data;
+  const val = dataMap.get(searchInput);
+  let sum = 0;
 
-  return Array.isArray(f)
-    ? f.reduce((p, c) => {
-      return Object.keys(c).reduce((ip, key) => {
-        const d = c[key];
-        const z = countBags(key, restData);
-        return p + c[key] * z;
-      }, p);
-    }, 1)
-    : 0;
+  if (val) {
+    for (let [k, v] of val.entries()) {
+      sum += v * (1 + countBags(k, dataMap));
+    }
+  }
+
+  return sum;
 };
 
 const testData2 = `shiny gold bags contain 2 dark red bags.
@@ -89,6 +105,6 @@ dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags.`;
 
-assertEquals(countBags("shiny gold", makeData(testData2)) - 1, 126);
+assertEquals(countBags("shiny gold", makeDataMap(testData2)), 126);
 
-console.log(countBags("shiny gold", makeData(data)) - 1);
+console.log(countBags("shiny gold", makeDataMap(data)));

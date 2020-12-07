@@ -70,9 +70,6 @@ const passPortId = (input: string) => {
   return /^[0-9]{9}$/.test(input);
 };
 
-// console.log(yearBetween("2004", 1920, 2003));
-// console.log(height("60in", [150, 193], [59, 76]));
-// console.log(height("150cm", [150, 193], [59, 76]));
 assertEquals(hairColor("#1d23456"), true);
 
 const validateKey = (key: keyof typeof required, input: string): boolean => {
@@ -122,26 +119,18 @@ const validatePassport = (pass: Partial<Record<string, string>>): boolean => {
 const getArrayOfObjects = (input: string): Array<Partial<typeof required>> => {
   const splat = input.split("\n");
 
-  // console.log('splat', splat)
   const dividedStrings = splat.reduce((prev, curr) => {
-    // console.log({curr})
     if (curr === "") {
-      // console.log('empty', curr, prev)
       return [...prev, []];
     } else {
-      // console.log('something', curr, prev)
       const prevArr = prev[prev.length - 1] || [];
-      // console.log({prevArr})
       prev[Math.max(prev.length - 1, 0)] = [...prevArr, curr];
-      // console.log({prev})
 
       return prev;
     }
   }, [] as Array<string[]>);
-  // console.log('dividedStrings', dividedStrings, dividedStrings.length)
 
   const objects = dividedStrings.reduce((prev, current) => {
-    // console.log('current',current)
     const obj = current.reduce((p, c) => {
       return { ...p, ...parseLine(c) };
     }, {} as Partial<typeof required>);

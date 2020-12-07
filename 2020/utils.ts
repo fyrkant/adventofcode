@@ -1,4 +1,4 @@
-export const getUnique = <T>(arr: T[]): T[] => {
+export const unique = <T>(arr: T[]): T[] => {
   return [
     ...new Set([
       ...arr,
