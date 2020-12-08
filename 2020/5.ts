@@ -27,6 +27,7 @@ const myId = data.split("\n").map((val) => {
 }).sort((a, b) => a - b).reduce((prev, curr, index, arr) => {
   const next = arr[index + 1];
   const prospectiveNext = curr + 1;
+
   return index > 0 && typeof next !== "undefined" && prospectiveNext !== next
     ? prospectiveNext
     : prev;
