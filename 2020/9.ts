@@ -78,9 +78,6 @@ const getFaultyNumber = (
   return true;
 };
 
-// assertEquals(getFaultyNumber(splitMap(testData, parseLine), 5), 127);
-// assertEquals(getFaultyNumber(splitMap(data, parseLine), 25), 90433990);
-
 const invalidNum = 90433990;
 
 const findSet = (
@@ -125,6 +122,37 @@ const findSet = (
   });
 };
 
+const add = (p: number, c: number) => p + c;
+
+const findSetTwo = (sum: number, nums: number[]): [number, number] | false => {
+  return nums.reduce(
+    (p, _c, startIndex) => {
+      return p || nums.slice(startIndex + 1).reduce((ip, _c, ei) => {
+        const endIndex = startIndex + ei + 1;
+
+        return !ip && sum === nums.slice(startIndex, endIndex).reduce(add, 0)
+          ? [startIndex, endIndex]
+          : ip;
+      }, false as false | [number, number]);
+    },
+    false as false | [number, number],
+  );
+  // for (let startIndex = 0; startIndex < nums.length; startIndex++) {
+  //   for (let endIndex = startIndex + 1; endIndex < nums.length; endIndex++) {
+  //     let x = 0;
+
+  //     for (let index = startIndex; index < endIndex; index++) {
+  //       x = x + nums[index];
+  //     }
+
+  //     if (x === sum) {
+  //       return [startIndex, endIndex];
+  //     }
+  //   }
+  // }
+  // return false;
+};
+
 const getSumOfTwo = (
   arr: number[],
   [startIndex, endIndex]: [number, number],
@@ -144,6 +172,13 @@ const doStuff = async (arr: number[], num: number) => {
     getSumOfTwo(arr, inds);
 };
 
+const doStuff2 = (arr: number[], num: number) => {
+  const inds = findSetTwo(num, arr);
+
+  return typeof inds !== "boolean" &&
+    getSumOfTwo(arr, inds);
+};
+
 // assertEquals(findSet(127, splitMap(testData, parseLine), 0, 1), [2, 5]);
 // assertEquals(doStuff(splitMap(testData, parseLine), 127), 62);
 // console.log(splitMap(data, parseLine).indexOf(90433990));
@@ -154,6 +189,11 @@ const test = async (input: string, num: number, expectedNum: number) => {
     assertEquals(v, expectedNum);
   });
 };
+const test2 = async (input: string, num: number, expectedNum: number) => {
+  const v = doStuff2(splitMap(input, parseLine), num);
+  // console.log({ v });
+  assertEquals(v, expectedNum);
+};
 
 // findSet(127, splitMap(testData, parseLine), 0, 1).then((x) => {
 //   console.log(x);
@@ -162,7 +202,8 @@ const test = async (input: string, num: number, expectedNum: number) => {
 //   console.log({ x });
 // });
 
-test(testData, 127, 62);
-test(data, 90433990, 11691646);
+// test(testData, 127, 62);
+// test2(testData, 127, 62);
+test2(data, 90433990, 11691646);
 
 // console.log(getSumOfTwo(splitMap(data, parseLine), [441, 457]));
