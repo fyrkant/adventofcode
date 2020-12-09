@@ -30,3 +30,5 @@ const writeDataFile = Deno.writeTextFile(
 Promise.all([writeCodeFile, writeDataFile]).then(() => {
   console.log("created files");
 });
+
+export {};
