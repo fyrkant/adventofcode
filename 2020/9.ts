@@ -1,12 +1,9 @@
 import { data } from "./data/9.ts";
 import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
+import { splitMap } from "../utils.ts";
 
 const parseLine = (input: string): number => {
   return parseInt(input, 10);
-};
-
-const splitMap = <T>(input: string, mapFn: (x: string) => T) => {
-  return input.split("\n").map(mapFn);
 };
 
 const testData = `35

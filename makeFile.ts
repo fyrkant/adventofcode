@@ -5,9 +5,12 @@ if (!year || !day) {
 }
 
 const exists = (path: string) => {
-  const s = Deno.statSync(path);
+  try {
+    const s = Deno.statSync(path);
 
-  return s.isFile || s.isDirectory;
+    return s.isFile || s.isDirectory;
+  } catch (error) {
+  }
 };
 
 const codeFilePath = `./${year}/${day}.ts`;
