@@ -1,6 +1,6 @@
 import { data } from "./data/6.ts";
 import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { unique } from "./utils.ts";
+import { unique } from "../utils.ts";
 
 const getArrayOfObjects = (input: string): string[][] => {
   const splat = input.split("\n");

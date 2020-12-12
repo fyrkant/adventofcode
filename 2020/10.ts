@@ -10,8 +10,7 @@ const makeData = (input: string) => {
   return splitMap(input, parseLine);
 };
 
-const testData = `
-1
+const testData = `1
 4
 5
 6
@@ -21,41 +20,17 @@ const testData = `
 12
 15
 16
-19
-`;
+19`;
 // odd: 6 even: 5
-const getJolts = (input: number[]) => {
+const getJolts = (input: number[], start = 0) => {
   const result = { one: 0, three: 0 };
   const sorted = input.sort((a, b) => a - b);
   const end = sorted[sorted.length - 1] + 3;
-  const sortedWithEnd = [0, ...sorted, end];
+  const sortedWithEnd = [...sorted, end];
 
-  // console.log(sortedWithEnd.length);
-
-  // const x = sortedWithEnd.reduce((p, c) => p + c, 0) % sorted.length;
-
-  // console.log({ x });
-
-  // let prev = null;
-  // for (const curr of sortedWithEnd) {
-  //   const diff = curr - (typeof prev === "number" ? prev : start);
-  //   console.log({ start, prev, curr, diff });
-
-  //   if (diff === 1) {
-  //     result["one"] += 1;
-  //   } else if (diff === 3) {
-  //     result["three"] += 1;
-  //   } else if (diff > 3 || diff < 1) {
-  //     return false;
-  //   }
-  //   prev = curr;
-  // }
-  for (let index = 0; index < sortedWithEnd.length; index++) {
-    const adapter = sortedWithEnd[index];
-    const nextAdapter = sortedWithEnd[index + 1];
-
-    const diff = nextAdapter - adapter;
-    // console.log({ index, nextAdapter, adapter, diff });
+  let prev = start;
+  for (const curr of sortedWithEnd) {
+    const diff = curr - prev;
 
     if (diff === 1) {
       result["one"] += 1;
@@ -64,17 +39,13 @@ const getJolts = (input: number[]) => {
     } else if (diff > 3 || diff < 1) {
       return false;
     }
-
-    // console.log({ index, prevAdapter, adapter });
+    prev = curr;
   }
-
-  // console.log(result);
 
   return result;
 };
 
-const testData2 = `
-1
+const testData2 = `1
 2
 3
 4
@@ -104,11 +75,22 @@ const testData2 = `
 46
 47
 48
-49
-`;
+49`;
 
-assertEquals(getJolts(makeData(testData)), { one: 7, three: 5 });
-assertEquals(getJolts(makeData(testData2)), { one: 22, three: 10 });
+const d1 = makeData(testData);
+// console.log(d1, d1.join(","));
+const d2 = makeData(testData2);
+const isEven = (num: number) => num % 2 === 0;
+const getOddEvenCounts = (a: number[]) => {
+  return a.reduce((p, c) => {
+    const even = isEven(c);
+    return { odd: p.odd + Number(!even), even: p.even + Number(even) };
+  }, { odd: 0, even: 0 } as { odd: number; even: number });
+};
+// console.log(getOddEvenCounts(d2));
+assertEquals(getJolts(d1), { one: 7, three: 5 });
+assertEquals(getJolts(d2), { one: 22, three: 10 });
+assertEquals(getJolts(makeData(data)), { one: 65, three: 38 });
 
 const hasMatch = (num: number, nums: number[]) => {
 };
@@ -119,61 +101,76 @@ const hasMatch = (num: number, nums: number[]) => {
 
 // assertEquals(getResult(getJolts(makeData(data))), 2470);
 
-const getAllArrangements = function* (
+// const getAllArrangements = function* (
+//   input: number[],
+//   entries?: IterableIterator<string>,
+// ): Generator<string> {
+//   const resultSet = new Set<string>(entries);
+//   const sortedArr = input.sort((a, b) => a - b);
+
+//   // if (!resultSet.has(sortedArr.toString()) && getJolts(sortedArr)) {
+//   //   resultSet.add(sortedArr.toString());
+//   // }
+
+//   for (let index = 0; index < sortedArr.length - 1; index++) {
+//     const arr = replaceArrVal(sortedArr.slice(), index);
+//     const stringified = arr.toString();
+//     // console.log({ stringified, a: sortedArr.slice(0, index).toString() });
+//     if (!resultSet.has(stringified) && getJolts(arr)) {
+//       yield stringified;
+//       resultSet.add(stringified);
+//       for (const x of getAllArrangements(arr, resultSet.keys())) {
+//         yield x;
+//       }
+//     }
+//   }
+
+//   // resultSet.forEach((x) => console.log(x));
+
+//   // return resultSet;
+// };
+
+const getArrangements = (
   input: number[],
-  entries?: IterableIterator<string>,
-): Generator<string> {
-  const resultSet = new Set<string>(entries);
+  resultSet: Set<string>,
+): Set<string> => {
   const sortedArr = input.sort((a, b) => a - b);
 
-  // if (!resultSet.has(sortedArr.toString()) && getJolts(sortedArr)) {
-  //   resultSet.add(sortedArr.toString());
-  // }
+  if (!resultSet.has(sortedArr.toString()) && getJolts(sortedArr)) {
+    resultSet.add(sortedArr.toString());
+  }
 
   for (let index = 0; index < sortedArr.length - 1; index++) {
     const arr = replaceArrVal(sortedArr.slice(), index);
     const stringified = arr.toString();
-    // console.log({ stringified, a: sortedArr.slice(0, index).toString() });
     if (!resultSet.has(stringified) && getJolts(arr)) {
-      yield stringified;
+      // yield stringified;
       resultSet.add(stringified);
-      for (const x of getAllArrangements(arr, resultSet.keys())) {
-        yield x;
-      }
+      getArrangements(arr, resultSet);
     }
   }
 
   // resultSet.forEach((x) => console.log(x));
 
-  // return resultSet;
+  return resultSet;
 };
 
-const factorialize = (num: number) => {
-  if (num === 0 || num === 1) {
-    return 1;
-  }
-  for (let i = num - 1; i >= 1; i--) {
-    num *= i;
-  }
-  return num;
-};
+const s = new Set<string>();
 
-const testarr = makeData(testData).sort((a, b) => a - b);
-const testarr2 = makeData(testData2).sort((a, b) => a - b);
-// debugger;
-console.log(testarr.length);
-console.log(
-  testarr.reduce((a, b) => a + b),
-  factorialize(8),
-);
+getArrangements(d1, s);
 
-// const s = new Set<string>();
+console.log(s.size);
+const s2 = new Set<string>();
 
-// for (const v of getAllArrangements(testarr2)) {
-//   console.log(v);
-//   s.add(v);
-// }
-// console.log(s.size);
+getArrangements(d2, s2);
+
+console.log(s2.size);
+const s3 = new Set<string>();
+
+getArrangements(makeData(data), s3);
+
+console.log(s3.size);
+
 // r.forEach((x) => console.log(x));
 // assertEquals(r.size, 8);
 // assertEquals(getAllArrangements(makeData(testData2)).size + 1, 19208);
