@@ -1,5 +1,5 @@
 import { data } from "./data/13.ts";
-import { assertEquals } from "../assert.bundle.js";
+// import { assertEquals } from "../assert.bundle.js";
 import { splitMap } from "../utils.ts";
 
 const parseLine = (input: string) => {
@@ -28,17 +28,17 @@ const getBuses = (input: string): [number, number][] => {
   return ret;
 };
 
-assertEquals(getBuses("17,x,13,19"), [[17, 0], [13, 2], [19, 3]]);
+// assertEquals(getBuses("17,x,13,19"), [[17, 0], [13, 2], [19, 3]]);
 
 type Data = ReturnType<typeof makeData>;
 
 const testData = `939
 7,13,x,x,59,x,31,19`;
 
-assertEquals(
-  makeData(testData),
-  [939, [7, 13, 59, 31, 19]],
-);
+// assertEquals(
+//   makeData(testData),
+//   [939, [7, 13, 59, 31, 19]],
+// );
 
 const getEarliestBus = (input: Data) => {
   const [departure, buses] = input;
@@ -63,11 +63,21 @@ const getEarliestBus = (input: Data) => {
   }
 };
 
-assertEquals(getEarliestBus(makeData(testData)), 295);
+// assertEquals(getEarliestBus(makeData(testData)), 295);
 // assertEquals(getEarliestBus(makeData(data)), 222);
 
-const allMatch = (timestamp: number, buses: ReturnType<typeof getBuses>) => {
-  return !buses.some(([id, offset]) => (timestamp + offset) % id !== 0);
+const allMatch = (
+  timestamp: number,
+  buses: ReturnType<typeof getBuses>,
+): boolean => {
+  for (let index = 0; index < buses.length; index++) {
+    const [id, offset] = buses[index];
+    if ((timestamp + offset) % id !== 0) {
+      return false;
+    }
+  }
+  return true;
+  // return !buses.some(([id, offset]) => (timestamp + offset) % id !== 0);
 };
 
 const findEarliestTimestamp = (
@@ -87,20 +97,26 @@ const findEarliestTimestamp = (
 
 const doFindEarliest = (input: string) => {
   const d = getBuses(input);
-  const first = d[0][0];
+  const first = 99999999999972;
+  console.log({ first });
   let x = 0;
   for (let index = first; !allMatch(index, d); index = index + first) {
     // console.log(index);
     x = index;
   }
-  return x + first;
+  const result = x + first;
+  console.log({ result });
+  return result;
   // return findEarliestTimestamp(d[0][0], d);
 };
 
-assertEquals(doFindEarliest("17,x,13,19"), 3417);
+// assertEquals(doFindEarliest("17,x,13,19"), 3417);
 // assertEquals(doFindEarliest("67,7,59,61"), 754018);
 // assertEquals(doFindEarliest("67,x,7,59,61"), 779210);
 // assertEquals(doFindEarliest("67,7,x,59,61"), 1261476);
-assertEquals(doFindEarliest("1789,37,47,1889"), 1202161486);
+// assertEquals(doFindEarliest("1789,37,47,1889"), 1202161486);
 // assertEquals(doFindEarliest(data), 1202161486);
+
+const x = doFindEarliest(data);
+console.log(x);
 // assertEquals(findEarliestTimestamp(29000000000, getBuses(data)), 123);
