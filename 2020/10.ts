@@ -1,6 +1,6 @@
 import { data } from "./data/10.ts";
 import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { replaceArrVal, splitMap } from "../utils.ts";
+import { splitMap } from "../utils.ts";
 
 const parseLine = (input: string) => {
   return parseInt(input, 10);
@@ -21,7 +21,7 @@ const testData = `1
 15
 16
 19`;
-// odd: 6 even: 5
+
 const getJolts = (input: number[], start = 0) => {
   const result = { one: 0, three: 0 };
   const sorted = input.sort((a, b) => a - b);
@@ -78,100 +78,55 @@ const testData2 = `1
 49`;
 
 const d1 = makeData(testData);
-// console.log(d1, d1.join(","));
 const d2 = makeData(testData2);
-const isEven = (num: number) => num % 2 === 0;
-const getOddEvenCounts = (a: number[]) => {
-  return a.reduce((p, c) => {
-    const even = isEven(c);
-    return { odd: p.odd + Number(!even), even: p.even + Number(even) };
-  }, { odd: 0, even: 0 } as { odd: number; even: number });
-};
-// console.log(getOddEvenCounts(d2));
 assertEquals(getJolts(d1), { one: 7, three: 5 });
 assertEquals(getJolts(d2), { one: 22, three: 10 });
 assertEquals(getJolts(makeData(data)), { one: 65, three: 38 });
 
-const hasMatch = (num: number, nums: number[]) => {
+const makeCorrectArr = (input: number[]) => {
+  const sorted = input.sort((a, b) => a - b);
+  return [0, ...sorted, sorted[sorted.length - 1] + 3];
 };
 
-// const getResult = (input: ReturnType<typeof getJolts>): number => {
-//   return input["one"] * input["three"];
-// };
-
-// assertEquals(getResult(getJolts(makeData(data))), 2470);
-
-// const getAllArrangements = function* (
-//   input: number[],
-//   entries?: IterableIterator<string>,
-// ): Generator<string> {
-//   const resultSet = new Set<string>(entries);
-//   const sortedArr = input.sort((a, b) => a - b);
-
-//   // if (!resultSet.has(sortedArr.toString()) && getJolts(sortedArr)) {
-//   //   resultSet.add(sortedArr.toString());
-//   // }
-
-//   for (let index = 0; index < sortedArr.length - 1; index++) {
-//     const arr = replaceArrVal(sortedArr.slice(), index);
-//     const stringified = arr.toString();
-//     // console.log({ stringified, a: sortedArr.slice(0, index).toString() });
-//     if (!resultSet.has(stringified) && getJolts(arr)) {
-//       yield stringified;
-//       resultSet.add(stringified);
-//       for (const x of getAllArrangements(arr, resultSet.keys())) {
-//         yield x;
-//       }
-//     }
-//   }
-
-//   // resultSet.forEach((x) => console.log(x));
-
-//   // return resultSet;
-// };
-
-const getArrangements = (
-  input: number[],
-  resultSet: Set<string>,
-): Set<string> => {
-  const sortedArr = input.sort((a, b) => a - b);
-
-  if (!resultSet.has(sortedArr.toString()) && getJolts(sortedArr)) {
-    resultSet.add(sortedArr.toString());
+const countArrangements = (
+  arr: number[],
+  startIndex: number,
+  map: Map<number, number>,
+): number => {
+  if (map.has(startIndex)) {
+    return map.get(startIndex) as number;
   }
+  let count = 0;
 
-  for (let index = 0; index < sortedArr.length - 1; index++) {
-    const arr = replaceArrVal(sortedArr.slice(), index);
-    const stringified = arr.toString();
-    if (!resultSet.has(stringified) && getJolts(arr)) {
-      // yield stringified;
-      resultSet.add(stringified);
-      getArrangements(arr, resultSet);
+  for (let index = startIndex + 1; index < arr.length; index++) {
+    if (arr[index] - arr[startIndex] < 4) {
+      if (index === arr.length - 1) {
+        count = count + 1;
+      } else {
+        count = count + countArrangements(arr, index, map);
+      }
     }
   }
 
-  // resultSet.forEach((x) => console.log(x));
+  map.set(startIndex, count);
 
-  return resultSet;
+  return count;
+};
+const getArrangementCount = (
+  input: number[],
+): number => {
+  const map = new Map<number, number>();
+  const adapters = makeCorrectArr(input);
+
+  return countArrangements(adapters, 0, map);
 };
 
-const s = new Set<string>();
+const s = getArrangementCount(d1);
 
-getArrangements(d1, s);
+console.log(s);
+// const s2 = getArrangementCount(d2);
 
-console.log(s.size);
-const s2 = new Set<string>();
+// console.log(s2);
+// const s3 = getArrangementCount(makeData(data));
 
-getArrangements(d2, s2);
-
-console.log(s2.size);
-const s3 = new Set<string>();
-
-getArrangements(makeData(data), s3);
-
-console.log(s3.size);
-
-// r.forEach((x) => console.log(x));
-// assertEquals(r.size, 8);
-// assertEquals(getAllArrangements(makeData(testData2)).size + 1, 19208);
-// assertEquals(getAllArrangements(makeData(data)).size + 1, 19208);
+// console.log(s3);
