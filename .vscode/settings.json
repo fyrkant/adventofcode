@@ -2,14 +2,14 @@
   "gotoSymbolStack.currentStackPosition": 0,
   "gotoSymbolStack.maxStackPosition": 0,
   "gotoSymbolStack.filePositionInfo": [],
-  "deno.enable": true,
+  // "deno.enable": true,
   "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "deno.import_intellisense_origins": {
-    "https://deno.land": true
-  },
-  "deno.lint": true,
-  "deno.unstable": true,
-  "deno.import_intellisense_autodiscovery": true
+  // "deno.import_intellisense_origins": {
+  //   "https://deno.land": true
+  // },
+  // "deno.lint": true,
+  // "deno.unstable": true,
+  // "deno.import_intellisense_autodiscovery": true
 }

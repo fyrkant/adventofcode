@@ -1,8 +1,8 @@
-import { data } from "./data/7.ts";
-import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
+import { data } from './data/7.ts';
+import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
 
 const getSplitLine = (input: string): [string, string] => {
-  const [start, end] = input.split("bags contain");
+  const [start, end] = input.split('bags contain');
   const color = start.trim();
   const trimmedEnd = end.trim();
   const rest = trimmedEnd.slice(0, trimmedEnd.length - 1);
@@ -11,12 +11,12 @@ const getSplitLine = (input: string): [string, string] => {
 };
 
 const getBagMap = (input: string): Map<string, number> => {
-  if (input === "no other bags") {
+  if (input === 'no other bags') {
     return new Map();
   } else {
     const map = new Map<string, number>();
 
-    for (const c of input.split(", ")) {
+    for (const c of input.split(', ')) {
       const [, count] = /^([0-9])+/.exec(c) || [];
       const color = c.slice(c.indexOf(count) + 1, c.length - 4).trim();
 
@@ -34,17 +34,23 @@ const parseLine = (input: string): [string, Map<string, number>] => {
 };
 
 assertEquals(
-  parseLine("light red bags contain 1 bright white bag, 2 muted yellow bags."),
-  ["light red", new Map([["bright white", 1], ["muted yellow", 2]])],
+  parseLine('light red bags contain 1 bright white bag, 2 muted yellow bags.'),
+  [
+    'light red',
+    new Map([
+      ['bright white', 1],
+      ['muted yellow', 2],
+    ]),
+  ]
 );
-assertEquals(
-  parseLine("faded blue bags contain no other bags."),
-  ["faded blue", new Map()],
-);
+assertEquals(parseLine('faded blue bags contain no other bags.'), [
+  'faded blue',
+  new Map(),
+]);
 
 const makeDataMap = (input: string): Map<string, Map<string, number>> => {
   const map = new Map<string, Map<string, number>>();
-  for (const line of input.split("\n")) {
+  for (const line of input.split('\n')) {
     map.set(...parseLine(line));
   }
 
@@ -53,13 +59,13 @@ const makeDataMap = (input: string): Map<string, Map<string, number>> => {
 
 const searchColor = (
   input: string,
-  dataMap: Map<string, Map<string, number>>,
+  dataMap: Map<string, Map<string, number>>
 ): Set<string> => {
   const set = new Set<string>();
 
   dataMap.delete(input);
   for (const key of dataMap.keys()) {
-    const found = typeof dataMap.get(key)?.get(input) === "number";
+    const found = typeof dataMap.get(key)?.get(input) === 'number';
     if (found) {
       [key, ...searchColor(key, dataMap).values()].forEach(set.add, set);
     }
@@ -67,8 +73,7 @@ const searchColor = (
   return set;
 };
 
-const testData =
-  `light red bags contain 1 bright white bag, 2 muted yellow bags.
+const testData = `light red bags contain 1 bright white bag, 2 muted yellow bags.
 dark orange bags contain 3 bright white bags, 4 muted yellow bags.
 bright white bags contain 1 shiny gold bag.
 muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
@@ -78,12 +83,12 @@ vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
 faded blue bags contain no other bags.
 dotted black bags contain no other bags.`;
 
-assertEquals(searchColor("shiny gold", makeDataMap(testData)).size, 4);
-assertEquals(searchColor("shiny gold", makeDataMap(data)).size, 126);
+assertEquals(searchColor('shiny gold', makeDataMap(testData)).size, 4);
+assertEquals(searchColor('shiny gold', makeDataMap(data)).size, 126);
 
 const countBags = (
   searchInput: string,
-  dataMap: Map<string, Map<string, number>>,
+  dataMap: Map<string, Map<string, number>>
 ): number => {
   const val = dataMap.get(searchInput);
   let sum = 0;
@@ -105,6 +110,6 @@ dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags.`;
 
-assertEquals(countBags("shiny gold", makeDataMap(testData2)), 126);
+assertEquals(countBags('shiny gold', makeDataMap(testData2)), 126);
 
-console.log(countBags("shiny gold", makeDataMap(data)));
+console.log(countBags('shiny gold', makeDataMap(data)));

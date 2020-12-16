@@ -1,6 +1,6 @@
-import { data } from "./data/2.ts";
-import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { splitMap } from "../utils.ts";
+import { data } from './data/2.ts';
+import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { splitMap } from '../utils.ts';
 
 const compute = (input: number[]) => {
   let index = 0;
@@ -33,9 +33,9 @@ const compute = (input: number[]) => {
 };
 
 const strToData = (input: string) =>
-  splitMap(input, (x) => parseInt(x, 10), ",");
+  splitMap(input, (x) => parseInt(x, 10), ',');
 
-assertEquals(compute(strToData("1,9,10,3,2,3,11,0,99,30,40,50")), 3500);
+assertEquals(compute(strToData('1,9,10,3,2,3,11,0,99,30,40,50')), 3500);
 const d = strToData(data);
 const d2 = [d[0], 12, 2, ...d.slice(3)];
 
@@ -46,12 +46,12 @@ const replaceArrVal = (arr: number[], index: number, newVal: number) => {
 const computeWithInput = (
   inputData: number[],
   [inputOneIndex, inputOneValue]: [number, number],
-  [inputTwoIndex, inputTwoValue]: [number, number],
+  [inputTwoIndex, inputTwoValue]: [number, number]
 ) => {
   const d2 = replaceArrVal(
     replaceArrVal(inputData, inputOneIndex, inputOneValue),
     inputTwoIndex,
-    inputTwoValue,
+    inputTwoValue
   );
   return compute(d2);
 };

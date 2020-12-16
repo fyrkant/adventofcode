@@ -1,7 +1,7 @@
-import { data } from "./data/1.ts";
+import { data } from './data/1.ts';
 
 const result = data.reduce((prev: undefined | number, cur, index) => {
-  if (typeof prev !== "undefined") {
+  if (typeof prev !== 'undefined') {
     return prev;
   }
 
@@ -9,7 +9,7 @@ const result = data.reduce((prev: undefined | number, cur, index) => {
 
   const match = slicedData.reduce(
     (innerPrev: undefined | number, innerCur, innerIndex) => {
-      if (typeof innerPrev !== "undefined") {
+      if (typeof innerPrev !== 'undefined') {
         return innerPrev;
       }
       const third = [
@@ -17,7 +17,7 @@ const result = data.reduce((prev: undefined | number, cur, index) => {
         ...slicedData.slice(innerIndex + 1),
       ];
       return third.reduce((p: undefined | number, c, i) => {
-        if (typeof p !== "undefined") {
+        if (typeof p !== 'undefined') {
           return p;
         }
         const sum = cur + innerCur + c;
@@ -26,7 +26,7 @@ const result = data.reduce((prev: undefined | number, cur, index) => {
         }
       }, undefined);
     },
-    undefined,
+    undefined
   );
 
   return match;

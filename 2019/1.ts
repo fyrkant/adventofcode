@@ -1,6 +1,6 @@
-import { data } from "./data/1.ts";
-import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { splitMap } from "../utils.ts";
+import { data } from './data/1.ts';
+import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { splitMap } from '../utils.ts';
 
 const parseLine = (input: string) => parseInt(input, 10);
 

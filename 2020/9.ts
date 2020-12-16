@@ -1,6 +1,6 @@
-import { data } from "./data/9.ts";
-import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { splitMap } from "../utils.ts";
+import { data } from './data/9.ts';
+import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { splitMap } from '../utils.ts';
 
 const parseLine = (input: string): number => {
   return parseInt(input, 10);
@@ -30,7 +30,7 @@ const testData = `35
 const checkIsSumOfSomeTwo = (
   sum: number,
   num: number,
-  nums: number[],
+  nums: number[]
 ): boolean => {
   for (const n of nums) {
     console.log(n);
@@ -52,20 +52,22 @@ const checkIsSumOfSomeTwo = (
 
 const getFaultyNumber = (
   array: number[],
-  preambleLength: number,
+  preambleLength: number
 ): number | true => {
   for (let index = preambleLength; index < array.length; index++) {
     const element = array[index];
     const prevNums = array.slice(
       index - preambleLength,
-      index + preambleLength,
+      index + preambleLength
     );
     const x = prevNums.reduce((p, x, i) => {
       console.log({ p, x, i });
-      return p || checkIsSumOfSomeTwo(
-        element,
-        x,
-        [...prevNums.slice(0, i), ...prevNums.slice(i + 1)],
+      return (
+        p ||
+        checkIsSumOfSomeTwo(element, x, [
+          ...prevNums.slice(0, i),
+          ...prevNums.slice(i + 1),
+        ])
       );
     }, false);
     if (!x) {
@@ -81,7 +83,7 @@ const findSet = (
   sum: number,
   nums: number[],
   startIndex: number,
-  endIndex: number,
+  endIndex: number
 ): Promise<[number, number]> => {
   return new Promise((res, rej) => {
     let acc = 0;
@@ -98,15 +100,10 @@ const findSet = (
         if (nextEndIndex > nums.length) {
           return rej(false);
         }
-        return findSet(
-          sum,
-          nums,
-          startIndex + 1,
-          nextEndIndex,
-        ).then(res, rej);
+        return findSet(sum, nums, startIndex + 1, nextEndIndex).then(res, rej);
       } else if (acc === sum) {
         const ret = [startIndex, endIndex - 1] as [number, number];
-        console.log("YESSSS!!!", { ret });
+        console.log('YESSSS!!!', { ret });
         res(ret);
 
         return;
@@ -122,18 +119,18 @@ const findSet = (
 const add = (p: number, c: number) => p + c;
 
 const findSetTwo = (sum: number, nums: number[]): [number, number] | false => {
-  return nums.reduce(
-    (p, _c, startIndex) => {
-      return p || nums.slice(startIndex + 1).reduce((ip, _c, ei) => {
+  return nums.reduce((p, _c, startIndex) => {
+    return (
+      p ||
+      nums.slice(startIndex + 1).reduce((ip, _c, ei) => {
         const endIndex = startIndex + ei + 1;
 
         return !ip && sum === nums.slice(startIndex, endIndex).reduce(add, 0)
           ? [startIndex, endIndex]
           : ip;
-      }, false as false | [number, number]);
-    },
-    false as false | [number, number],
-  );
+      }, false as false | [number, number])
+    );
+  }, false as false | [number, number]);
   // for (let startIndex = 0; startIndex < nums.length; startIndex++) {
   //   for (let endIndex = startIndex + 1; endIndex < nums.length; endIndex++) {
   //     let x = 0;
@@ -152,7 +149,7 @@ const findSetTwo = (sum: number, nums: number[]): [number, number] | false => {
 
 const getSumOfTwo = (
   arr: number[],
-  [startIndex, endIndex]: [number, number],
+  [startIndex, endIndex]: [number, number]
 ): number => {
   const sorted = arr.slice(startIndex, endIndex).sort((a, b) => a - b);
 
@@ -165,15 +162,13 @@ const getSumOfTwo = (
 const doStuff = async (arr: number[], num: number) => {
   const inds = await findSet(num, arr, 0, 1);
 
-  return typeof inds !== "boolean" &&
-    getSumOfTwo(arr, inds);
+  return typeof inds !== 'boolean' && getSumOfTwo(arr, inds);
 };
 
 const doStuff2 = (arr: number[], num: number) => {
   const inds = findSetTwo(num, arr);
 
-  return typeof inds !== "boolean" &&
-    getSumOfTwo(arr, inds);
+  return typeof inds !== 'boolean' && getSumOfTwo(arr, inds);
 };
 
 // assertEquals(findSet(127, splitMap(testData, parseLine), 0, 1), [2, 5]);

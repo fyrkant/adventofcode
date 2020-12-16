@@ -1,8 +1,8 @@
-import { data } from "./data/3.ts";
+import { data } from './data/3.ts';
 
-const tree = "#";
+const tree = '#';
 
-const splitData = data.split("\n");
+const splitData = data.split('\n');
 
 type T = { position: number; count: number };
 
@@ -19,7 +19,7 @@ const getResult = (rightStep: number, downStep = 1) =>
         count: isTree ? prev.count + 1 : prev.count,
       };
     },
-    { position: 0, count: 0 } as T,
+    { position: 0, count: 0 } as T
   );
 
 const bigNum = [

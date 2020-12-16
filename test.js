@@ -1,4 +1,4 @@
-const data = `107\n13\n116\n132\n24\n44\n56\n69\n28\n135\n152\n109\n42\n112\n10\n43\n122\n87\n49\n155\n175\n71\n39\n173\n50\n156\n120\n145\n176\n45\n149\n148\n15\n1\n68\n9\n168\n131\n150\n59\n83\n167\n3\n169\n6\n123\n174\n81\n138\n72\n157\n144\n65\n75\n33\n19\n140\n160\n16\n57\n93\n90\n8\n58\n98\n130\n141\n114\n84\n29\n22\n94\n113\n129\n108\n36\n14\n115\n102\n151\n78\n139\n170\n82\n2\n70\n126\n101\n25\n62\n95\n104\n23\n163\n32\n103\n121\n119\n48\n166\n7\n53`;
+const data = `1000511\n29,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,37,x,x,x,x,x,409,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,17,13,19,x,x,x,23,x,x,x,x,x,x,x,353,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,41`;
 const noColor = globalThis.Deno?.noColor ?? true;
 let enabled = !noColor;
 function code(open, close) {
@@ -30,9 +30,6 @@ function white(str) {
     return run(str, code([
         37
     ], 39));
-}
-function gray(str) {
-    return brightBlack(str);
 }
 function brightBlack(str) {
     return run(str, code([
@@ -197,12 +194,12 @@ function diff(A, B) {
     while(fp[delta + N].y < N){
         p = p + 1;
         for(let k = -p; k < delta; ++k){
-            fp[k + offset] = snake(k, fp[k - 1 + N], fp[k + 1 + N], N, A, B);
+            fp[k + N] = snake(k, fp[k - 1 + N], fp[k + 1 + N], N, A, B);
         }
         for(let k1 = delta + p; k1 > delta; --k1){
-            fp[k1 + offset] = snake(k1, fp[k1 - 1 + N], fp[k1 + 1 + N], N, A, B);
+            fp[k1 + N] = snake(k1, fp[k1 - 1 + N], fp[k1 + 1 + N], N, A, B);
         }
-        fp[delta + offset] = snake(delta, fp[delta - 1 + N], fp[delta + 1 + N], N, A, B);
+        fp[delta + N] = snake(delta, fp[delta - 1 + N], fp[delta + 1 + N], N, A, B);
     }
     return [
         ...prefixCommon.map((c)=>({
@@ -218,6 +215,7 @@ function diff(A, B) {
         ), 
     ];
 }
+const CAN_NOT_DISPLAY = "[Cannot display]";
 function _format(v) {
     return globalThis.Deno ? Deno.inspect(v, {
         depth: Infinity,
@@ -248,20 +246,6 @@ function createSign(diffType) {
         default:
             return "    ";
     }
-}
-function buildMessage(diffResult) {
-    const messages = [];
-    messages.push("");
-    messages.push("");
-    messages.push(`    ${gray(bold("[Diff]"))} ${red(bold("Actual"))} / ${green(bold("Expected"))}`);
-    messages.push("");
-    messages.push("");
-    diffResult.forEach((result)=>{
-        const c = createColor(result.type);
-        messages.push(c(`${createSign(result.type)}${result.value}`));
-    });
-    messages.push("");
-    return messages;
 }
 function isKeyedCollection(x) {
     return [
@@ -330,6 +314,96 @@ function assert(expr, msg = "") {
         throw new AssertionError(msg);
     }
 }
+const parseLine = (input)=>{
+    return parseInt(input, 10);
+};
+const makeData = (input)=>{
+    const [t, rest] = input.split("\n");
+    const earliest = parseInt(t, 10);
+    const buses = rest.split(",").filter((x)=>x !== "x"
+    ).map(parseLine);
+    return [
+        earliest,
+        buses
+    ];
+};
+const getBuses = (input)=>{
+    const arr = input.split(",");
+    const ret = [];
+    for(let index = 0; index < arr.length; index++){
+        const id = arr[index];
+        if (id !== "x") {
+            const x = [
+                parseInt(id, 10),
+                index
+            ];
+            ret.push(x);
+        }
+    }
+    return ret;
+};
+const getEarliestBus = (input)=>{
+    const [departure, buses] = input;
+    let nearestBusDeparture = Infinity;
+    let nearestBusId = null;
+    for(let index = 0; index < buses.length; index++){
+        const busId = buses[index];
+        const busDepartureTimes = Math.ceil(departure / busId);
+        const busDepartureTime = busId * busDepartureTimes;
+        if (busDepartureTime > departure && busDepartureTime < nearestBusDeparture) {
+            nearestBusDeparture = busDepartureTime;
+            nearestBusId = busId;
+        }
+    }
+    if (nearestBusId) {
+        const waitTime = nearestBusDeparture - departure;
+        return nearestBusId * waitTime;
+    }
+};
+const findEarliestTimestamp = (start, buses)=>{
+    const initial = buses.sort((a, b)=>b[0] - a[0]
+    )[0];
+    let timestamp = initial[0];
+    let count = 0;
+    while(true){
+        count++;
+        if (count % 10000 === 0) {
+            console.log({
+                count
+            });
+        }
+        if (buses.every(([id, offset])=>(timestamp + offset - initial[1]) % id === 0
+        )) {
+            return timestamp - initial[1];
+        } else {
+            timestamp = timestamp + initial[0];
+        }
+    }
+};
+const doFindEarliest = (input, start)=>{
+    const d = getBuses(input);
+    const first = d[0][0];
+    return findEarliestTimestamp(start || first, d);
+};
+const x = doFindEarliest(data.split("\n")[1]);
+console.log(x);
+function gray(str) {
+    return brightBlack(str);
+}
+function buildMessage(diffResult) {
+    const messages = [];
+    messages.push("");
+    messages.push("");
+    messages.push(`    ${gray(bold("[Diff]"))} ${red(bold("Actual"))} / ${green(bold("Expected"))}`);
+    messages.push("");
+    messages.push("");
+    diffResult.forEach((result)=>{
+        const c = createColor(result.type);
+        messages.push(c(`${createSign(result.type)}${result.value}`));
+    });
+    messages.push("");
+    return messages;
+}
 function assertEquals(actual, expected, msg) {
     if (equal(actual, expected)) {
         return;
@@ -342,100 +416,12 @@ function assertEquals(actual, expected, msg) {
         const diffMsg = buildMessage(diffResult).join("\n");
         message = `Values are not equal:\n${diffMsg}`;
     } catch (e) {
-        message = `\n${red("[Cannot display]")} + \n\n`;
+        message = `\n${red(CAN_NOT_DISPLAY)} + \n\n`;
     }
     if (msg) {
         message = msg;
     }
     throw new AssertionError(message);
 }
-const splitMap = (input, mapFn, splitString = "\n")=>{
-    return input.split(splitString).map(mapFn);
-};
-const replaceArrVal = (arr, index, newVal)=>{
-    return arr.slice(0, index).concat(newVal ? newVal : []).concat(arr.slice(index + 1));
-};
-const parseLine = (input)=>{
-    return parseInt(input, 10);
-};
-const makeData = (input)=>{
-    return splitMap(input, parseLine);
-};
-const testData = `1\n4\n5\n6\n7\n10\n11\n12\n15\n16\n19`;
-const getJolts = (input, start = 0)=>{
-    const result = {
-        one: 0,
-        three: 0
-    };
-    const sorted = input.sort((a, b)=>a - b
-    );
-    const end = sorted[sorted.length - 1] + 3;
-    const sortedWithEnd = [
-        ...sorted,
-        end
-    ];
-    let prev = start;
-    for (const curr of sortedWithEnd){
-        const diff1 = curr - prev;
-        if (diff1 === 1) {
-            result["one"] += 1;
-        } else if (diff1 === 3) {
-            result["three"] += 1;
-        } else if (diff1 > 3 || diff1 < 1) {
-            return false;
-        }
-        prev = curr;
-    }
-    return result;
-};
-const testData2 = `1\n2\n3\n4\n7\n8\n9\n10\n11\n14\n17\n18\n19\n20\n23\n24\n25\n28\n31\n32\n33\n34\n35\n38\n39\n42\n45\n46\n47\n48\n49`;
-const d1 = makeData(testData);
-const d2 = makeData(testData2);
-const isEven = (num)=>num % 2 === 0
-;
-assertEquals(getJolts(d1), {
-    one: 7,
-    three: 5
-});
-assertEquals(getJolts(d2), {
-    one: 22,
-    three: 10
-});
-const getAllArrangements = function*(input, entries) {
-    const resultSet = new Set(entries);
-    const sortedArr = input.sort((a, b)=>a - b
-    );
-    for(let index = 0; index < sortedArr.length - 1; index++){
-        const arr = replaceArrVal(sortedArr.slice(), index);
-        const stringified = arr.toString();
-        if (!resultSet.has(stringified) && getJolts(arr)) {
-            yield stringified;
-            resultSet.add(stringified);
-            for (const x of getAllArrangements(arr, resultSet.keys())){
-                yield x;
-            }
-        }
-    }
-};
-const getArrangements = (input, resultSet)=>{
-    const sortedArr = input.sort((a, b)=>a - b
-    );
-    for(let index = 0; index < sortedArr.length - 1; index++){
-        const arr = replaceArrVal(sortedArr.slice(), index);
-        const stringified = arr.toString();
-        if (!resultSet.has(stringified) && getJolts(arr)) {
-            resultSet.add(stringified);
-            getArrangements(arr, resultSet);
-        }
-    }
-    return resultSet;
-};
-const s = new Set();
-getArrangements(d1, s);
-console.log(s.size);
-const s2 = new Set();
-getArrangements(d2, s2);
-console.log(s2.size);
-const s3 = new Set();
-getArrangements(makeData(data), s3);
-console.log(s3.size);
+assertEquals(getEarliestBus(makeData(data)), 222);
+assertEquals(findEarliestTimestamp(29000000000, getBuses(data)), 123);

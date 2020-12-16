@@ -1,6 +1,6 @@
-import { data } from "./data/10.ts";
-import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { splitMap } from "../utils.ts";
+import { data } from './data/10.ts';
+import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { splitMap } from '../utils.ts';
 
 const parseLine = (input: string) => {
   return parseInt(input, 10);
@@ -33,9 +33,9 @@ const getJolts = (input: number[], start = 0) => {
     const diff = curr - prev;
 
     if (diff === 1) {
-      result["one"] += 1;
+      result['one'] += 1;
     } else if (diff === 3) {
-      result["three"] += 1;
+      result['three'] += 1;
     } else if (diff > 3 || diff < 1) {
       return false;
     }
@@ -91,7 +91,7 @@ const makeCorrectArr = (input: number[]) => {
 const countArrangements = (
   arr: number[],
   startIndex: number,
-  map: Map<number, number>,
+  map: Map<number, number>
 ): number => {
   if (map.has(startIndex)) {
     return map.get(startIndex) as number;
@@ -112,9 +112,7 @@ const countArrangements = (
 
   return count;
 };
-const getArrangementCount = (
-  input: number[],
-): number => {
+const getArrangementCount = (input: number[]): number => {
   const map = new Map<number, number>();
   const adapters = makeCorrectArr(input);
 

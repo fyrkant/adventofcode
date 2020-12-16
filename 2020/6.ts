@@ -1,12 +1,12 @@
-import { data } from "./data/6.ts";
-import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { unique } from "../utils.ts";
+import { data } from './data/6.ts';
+import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { unique } from '../utils.ts';
 
 const getArrayOfObjects = (input: string): string[][] => {
-  const splat = input.split("\n");
+  const splat = input.split('\n');
 
   const dividedStrings = splat.reduce((prev, curr) => {
-    if (curr === "") {
+    if (curr === '') {
       return [...prev, []];
     } else {
       const prevArr = prev[prev.length - 1] || [];
@@ -25,7 +25,7 @@ const getArrayOfObjects = (input: string): string[][] => {
 const filterForAllHas = (x: string[][]) => {
   return x.map((v) => {
     return v.reduce((p, c) => {
-      const splitCurr = c.split("");
+      const splitCurr = c.split('');
 
       return unique([
         ...p,
@@ -35,10 +35,11 @@ const filterForAllHas = (x: string[][]) => {
   });
 };
 
-assertEquals(
-  filterForAllHas([["abc"], ["a", "b", "c"], ["ab", "ac"]]),
-  [["a", "b", "c"], [], ["a"]],
-);
+assertEquals(filterForAllHas([['abc'], ['a', 'b', 'c'], ['ab', 'ac']]), [
+  ['a', 'b', 'c'],
+  [],
+  ['a'],
+]);
 
 const getCount = (input: string[][]) =>
   input.reduce((prev, curr) => {

@@ -200,4 +200,3 @@ export const data = [
   951,
   1849,
 ];
-

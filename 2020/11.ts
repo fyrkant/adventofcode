@@ -1,10 +1,10 @@
-import { data } from "./data/11.ts";
-import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { splitMap } from "../utils.ts";
+import { data } from './data/11.ts';
+import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { splitMap } from '../utils.ts';
 
-const floor = ".";
-const emptySeat = "L";
-const occupiedSeat = "#";
+const floor = '.';
+const emptySeat = 'L';
+const occupiedSeat = '#';
 
 const testData = `L.LL.LL.LL
 LLLLLLL.LL
@@ -73,7 +73,7 @@ L.#.L..#..
 #.#L#L#.##`;
 
 const parseLine = (input: string) => {
-  return splitMap(input, (x) => x, "");
+  return splitMap(input, (x) => x, '');
 };
 
 const makeData = (input: string) => {
@@ -82,7 +82,7 @@ const makeData = (input: string) => {
 
 const getFromDelta = (
   arr: string[][],
-  [newLineIndex, newSeatIndex]: [number, number],
+  [newLineIndex, newSeatIndex]: [number, number]
 ): string | false => {
   const newLine = arr[newLineIndex];
   if (!newLine) return false;
@@ -95,7 +95,7 @@ const getFromDelta = (
 const countSurroundingSeats = (
   arr: string[][],
   lineIndex: number,
-  seatIndex: number,
+  seatIndex: number
 ) => {
   const deltas = [
     [-1, -1],
@@ -109,10 +109,10 @@ const countSurroundingSeats = (
   ];
 
   return deltas.reduce((p, [newLineIndex, newSeatIndex]) => {
-    const newSeat = getFromDelta(
-      arr,
-      [lineIndex + newLineIndex, seatIndex + newSeatIndex],
-    );
+    const newSeat = getFromDelta(arr, [
+      lineIndex + newLineIndex,
+      seatIndex + newSeatIndex,
+    ]);
     if (!newSeat) return p;
 
     return newSeat === occupiedSeat ? p + 1 : p;
@@ -127,7 +127,7 @@ assertEquals(countSurroundingSeats(makeData(testData2), 4, 9), 5);
 const countSeenSurrounding = (
   arr: string[][],
   lineIndex: number,
-  seatIndex: number,
+  seatIndex: number
 ) => {
   const deltas = [
     [-1, -1],
@@ -161,9 +161,9 @@ assertEquals(
 .L.L.#.#.#.#.
 .............`),
     1,
-    1,
+    1
   ),
-  0,
+  0
 );
 assertEquals(
   countSeenSurrounding(
@@ -177,9 +177,9 @@ assertEquals(
 #........
 ...#.....`),
     4,
-    3,
+    3
   ),
-  8,
+  8
 );
 
 const applySeatingRules = (input: string[][]) => {
@@ -188,20 +188,10 @@ const applySeatingRules = (input: string[][]) => {
     const line = input[lineIndex];
     for (let seatIndex = 0; seatIndex < line.length; seatIndex++) {
       const seat = line[seatIndex];
-      const occupiedCount = countSeenSurrounding(
-        input,
-        lineIndex,
-        seatIndex,
-      );
-      if (
-        seat === emptySeat &&
-        occupiedCount === 0
-      ) {
+      const occupiedCount = countSeenSurrounding(input, lineIndex, seatIndex);
+      if (seat === emptySeat && occupiedCount === 0) {
         result[lineIndex][seatIndex] = occupiedSeat;
-      } else if (
-        seat === occupiedSeat &&
-        occupiedCount >= 5
-      ) {
+      } else if (seat === occupiedSeat && occupiedCount >= 5) {
         result[lineIndex][seatIndex] = emptySeat;
       } else {
         result[lineIndex][seatIndex] = seat;
@@ -252,9 +242,12 @@ const runUntilSameReturn = (input: string[][]) => {
 
 const countOccupiedSeats = (input: string[][]): number => {
   return input.reduce((lineCount, line) => {
-    return lineCount + line.reduce((seatCount, seat) => {
-      return seatCount + (seat === occupiedSeat ? 1 : 0);
-    }, 0);
+    return (
+      lineCount +
+      line.reduce((seatCount, seat) => {
+        return seatCount + (seat === occupiedSeat ? 1 : 0);
+      }, 0)
+    );
   }, 0);
 };
 

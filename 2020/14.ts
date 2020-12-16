@@ -1,5 +1,5 @@
-import { data } from "./data/14.ts";
-import { assertEquals } from "../assert.bundle.js";
+import { data } from './data/14';
+import { assertEquals } from '../assert.bundle';
 
 const testData = `mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
 mem[8] = 11
@@ -7,45 +7,48 @@ mem[7] = 101
 mem[8] = 0`;
 
 const toBinary = (n: number) => {
-  return (n >>> 0).toString(2).padStart(36, "0");
+  return (n >>> 0).toString(2).padStart(36, '0');
 };
 
 const makeData = (input: string) => {
-  const arr = input.split("\n");
+  const arr = input.split('\n');
   return arr.reduce((p, line, i, a) => {
-    if (line.startsWith("mask")) {
-      const [, mask] = line.split(" = ");
+    if (line.startsWith('mask')) {
+      const [, mask] = line.split(' = ');
       p.push({ mask, mems: [] });
       return p;
     }
-    const [mem, val] = line.split(" = ");
+    const [mem, val] = line.split(' = ');
     const [, pos] = /^mem\[([0-9]+)\]$/.exec(mem) || [];
     p[p.length - 1].mems.push([parseInt(pos, 10), parseInt(val, 10)]);
     return p;
   }, [] as { mask: string; mems: [number, number][] }[]);
 };
 
-assertEquals(
-  makeData(testData),
-  [{
-    mask: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
-    mems: [[8, 11], [7, 101], [8, 0]],
-  }],
-);
+assertEquals(makeData(testData), [
+  {
+    mask: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X',
+    mems: [
+      [8, 11],
+      [7, 101],
+      [8, 0],
+    ],
+  },
+]);
 
 const maskBit = (value: number, mask: string) => {
-  const valueBits = toBinary(value).split(""); //.map((x) => parseInt(x, 10));
+  const valueBits = toBinary(value).split(''); //.map((x) => parseInt(x, 10));
 
   for (let index = 0; index < mask.length; index++) {
     const element = mask[index];
 
-    if (element !== "X") {
+    if (element !== 'X') {
       // const v = parseInt(element, 10);
       valueBits[index] = element;
     }
   }
 
-  const x = parseInt(valueBits.join(""), 2);
+  const x = parseInt(valueBits.join(''), 2);
   return x;
 };
 
@@ -68,21 +71,27 @@ const getAllCombinations = (len: number) => {
   return retArr;
 };
 
-assertEquals(
-  getAllCombinations(3),
-  ["000", "001", "010", "011", "100", "101", "110", "111"],
-);
+assertEquals(getAllCombinations(3), [
+  '000',
+  '001',
+  '010',
+  '011',
+  '100',
+  '101',
+  '110',
+  '111',
+]);
 
 const getFloatingBitPositions = (value: number, mask: string): number[] => {
-  const valueBits = toBinary(value).split(""); //.map((x) => parseInt(x, 10));
+  const valueBits = toBinary(value).split(''); //.map((x) => parseInt(x, 10));
   const returnArr: number[] = [];
   let floatCount = 0;
   for (let index = 0; index < mask.length; index++) {
     const element = mask[index];
 
-    if (element === "1" || element === "X") {
+    if (element === '1' || element === 'X') {
       // const v = parseInt(element, 10);
-      if (element === "X") {
+      if (element === 'X') {
         floatCount++;
       }
       valueBits[index] = element;
@@ -92,11 +101,11 @@ const getFloatingBitPositions = (value: number, mask: string): number[] => {
   const floatCombinations = getAllCombinations(floatCount);
 
   const nums = floatCombinations.map((floatString) => {
-    let s = valueBits.join("");
+    let s = valueBits.join('');
     for (let i = 0; i < floatString.length; i++) {
       const element = floatString[i];
 
-      s = s.replace("X", element);
+      s = s.replace('X', element);
     }
     return parseInt(s, 2);
   });
@@ -104,7 +113,7 @@ const getFloatingBitPositions = (value: number, mask: string): number[] => {
   return nums;
 };
 
-assertEquals(maskBit(11, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X"), 73);
+assertEquals(maskBit(11, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X'), 73);
 
 const maskBits = (input: ReturnType<typeof makeData>) => {
   const mem = new Map<number, number>();

@@ -14,7 +14,7 @@
       "runtimeArgs": [
         "run",
         "--unstable",
-        "--inspect-brk",
+        "--inspect",
         "--allow-all"
       ],
       "attachSimplePort": 9229

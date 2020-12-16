@@ -1,16 +1,16 @@
-import { data } from "./data/4.ts";
-import { assertEquals } from "https://deno.land/std@0.79.0/testing/asserts.ts";
-import { ObjectKeys } from "./types.d.ts";
+import { data } from './data/4.ts';
+import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { ObjectKeys } from './types.d.ts';
 
 const required = {
-  byr: "Birth Year",
-  iyr: "Issue Year",
-  eyr: "Expiration Year",
-  hgt: "Height",
-  hcl: "Hair Color",
-  ecl: "Eye Color",
-  pid: "Passport ID",
-  cid: "Country ID",
+  byr: 'Birth Year',
+  iyr: 'Issue Year',
+  eyr: 'Expiration Year',
+  hgt: 'Height',
+  hcl: 'Hair Color',
+  ecl: 'Eye Color',
+  pid: 'Passport ID',
+  cid: 'Country ID',
 } as const;
 
 const testData = `hcl:#888785
@@ -23,8 +23,8 @@ hcl:#602927 eyr:1967 hgt:170cm
 ecl:grn pid:012533040 byr:1946`;
 
 const parseLine = (line: string) => {
-  return line.split(" ").reduce((prev, curr) => {
-    const [key, val] = curr.split(":");
+  return line.split(' ').reduce((prev, curr) => {
+    const [key, val] = curr.split(':');
 
     const ret = { ...prev, [key]: val };
 
@@ -45,11 +45,11 @@ const yearBetween = (input: string, min: number, max: number) => {
 const height = (
   input: string,
   cm: [number, number],
-  inch: [number, number],
+  inch: [number, number]
 ) => {
   const type = input.slice(input.length - 2);
   const num = parseInt(input.slice(0, input.length - 2), 10);
-  return type === "cm"
+  return type === 'cm'
     ? minMax(num, cm[0], cm[1])
     : minMax(num, inch[0], inch[1]);
 };
@@ -57,11 +57,11 @@ const height = (
 const hairColor = (input: string) => {
   const [hash, ...rest] = input;
 
-  return hash === "#" && /^([a-f]|[0-9]){6}$/.test(rest.join(""));
+  return hash === '#' && /^([a-f]|[0-9]){6}$/.test(rest.join(''));
 };
 
 const eyeColor = (input: string) => {
-  const approved = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+  const approved = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'];
 
   return approved.includes(input);
 };
@@ -70,30 +70,30 @@ const passPortId = (input: string) => {
   return /^[0-9]{9}$/.test(input);
 };
 
-assertEquals(hairColor("#1d23456"), true);
+assertEquals(hairColor('#1d23456'), true);
 
 const validateKey = (key: keyof typeof required, input: string): boolean => {
   console.log(key, input);
   switch (key) {
-    case "byr":
+    case 'byr':
       return yearBetween(input, 1920, 2002);
 
-    case "iyr":
+    case 'iyr':
       return yearBetween(input, 2010, 2020);
 
-    case "eyr":
+    case 'eyr':
       return yearBetween(input, 2020, 2030);
 
-    case "hgt":
+    case 'hgt':
       return height(input, [150, 193], [60, 76]);
 
-    case "hcl":
+    case 'hcl':
       return hairColor(input);
 
-    case "ecl":
+    case 'ecl':
       return eyeColor(input);
 
-    case "pid":
+    case 'pid':
       return passPortId(input);
 
     default:
@@ -106,21 +106,21 @@ const validatePassport = (pass: Partial<Record<string, string>>): boolean => {
 
   const { cid, ...restReq } = required;
   const requiredKeys = Object.keys(restReq) as ObjectKeys<
-    Omit<typeof required, "cid">
+    Omit<typeof required, 'cid'>
   >;
 
   return requiredKeys.reduce((p, c) => {
     const val = pass[c];
-    const x = p && typeof val === "string" && validateKey(c, val);
+    const x = p && typeof val === 'string' && validateKey(c, val);
     return x;
   }, true as boolean);
 };
 
 const getArrayOfObjects = (input: string): Array<Partial<typeof required>> => {
-  const splat = input.split("\n");
+  const splat = input.split('\n');
 
   const dividedStrings = splat.reduce((prev, curr) => {
-    if (curr === "") {
+    if (curr === '') {
       return [...prev, []];
     } else {
       const prevArr = prev[prev.length - 1] || [];
