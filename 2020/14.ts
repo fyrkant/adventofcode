@@ -1,5 +1,5 @@
 import { data } from './data/14';
-import { assertEquals } from '../assert.bundle';
+import { strictEqual } from '../assert.bundle';
 
 const testData = `mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
 mem[8] = 11
@@ -25,7 +25,7 @@ const makeData = (input: string) => {
   }, [] as { mask: string; mems: [number, number][] }[]);
 };
 
-assertEquals(makeData(testData), [
+strictEqual(makeData(testData), [
   {
     mask: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X',
     mems: [
@@ -71,7 +71,7 @@ const getAllCombinations = (len: number) => {
   return retArr;
 };
 
-assertEquals(getAllCombinations(3), [
+strictEqual(getAllCombinations(3), [
   '000',
   '001',
   '010',
@@ -113,7 +113,7 @@ const getFloatingBitPositions = (value: number, mask: string): number[] => {
   return nums;
 };
 
-assertEquals(maskBit(11, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X'), 73);
+strictEqual(maskBit(11, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X'), 73);
 
 const maskBits = (input: ReturnType<typeof makeData>) => {
   const mem = new Map<number, number>();
@@ -148,13 +148,13 @@ const maskFloatingBits = (input: ReturnType<typeof makeData>) => {
   return sum;
 };
 
-// assertEquals(maskBits(makeData(testData)), 165);
-// assertEquals(maskBits(makeData(data)), 13476250121721);
+// strictEqual(maskBits(makeData(testData)), 165);
+// strictEqual(maskBits(makeData(data)), 13476250121721);
 
 const testData2 = `mask = 000000000000000000000000000000X1001X
 mem[42] = 100
 mask = 00000000000000000000000000000000X0XX
 mem[26] = 1`;
 
-assertEquals(maskFloatingBits(makeData(testData2)), 208);
+strictEqual(maskFloatingBits(makeData(testData2)), 208);
 console.log(maskFloatingBits(makeData(data)));

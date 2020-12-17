@@ -1,6 +1,6 @@
-import { data } from './data/10.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
-import { splitMap } from '../utils.ts';
+import { data } from './data/10';
+import { strictEqual } from 'assert';
+import { splitMap } from '../utils';
 
 const parseLine = (input: string) => {
   return parseInt(input, 10);
@@ -79,9 +79,9 @@ const testData2 = `1
 
 const d1 = makeData(testData);
 const d2 = makeData(testData2);
-assertEquals(getJolts(d1), { one: 7, three: 5 });
-assertEquals(getJolts(d2), { one: 22, three: 10 });
-assertEquals(getJolts(makeData(data)), { one: 65, three: 38 });
+strictEqual(getJolts(d1), { one: 7, three: 5 });
+strictEqual(getJolts(d2), { one: 22, three: 10 });
+strictEqual(getJolts(makeData(data)), { one: 65, three: 38 });
 
 const makeCorrectArr = (input: number[]) => {
   const sorted = input.sort((a, b) => a - b);

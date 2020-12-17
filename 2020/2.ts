@@ -1,4 +1,4 @@
-import { data } from './data/2.ts';
+import { data } from './data/2';
 
 const parseLine = (string: string) => {
   const [numbers, character, input] = string.split(' ');

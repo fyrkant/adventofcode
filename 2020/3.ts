@@ -1,13 +1,13 @@
-import { data } from './data/3.ts';
+import { data } from './data/3';
 
 const tree = '#';
 
-const splitData = data.split('\n');
+const splitData: string[] = data.split('\n');
 
 type T = { position: number; count: number };
 
 const getResult = (rightStep: number, downStep = 1) =>
-  splitData.reduce<{ position: number; count: number }>(
+  splitData.reduce(
     (prev, currentLine, index) => {
       if (downStep !== 1 && index % 2 !== 0) {
         return prev;

@@ -1,6 +1,6 @@
-import { data } from './data/4.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
-import { ObjectKeys } from './types.d.ts';
+import { data } from './data/4';
+import { strictEqual } from 'assert';
+import { ObjectKeys } from './types.d';
 
 const required = {
   byr: 'Birth Year',
@@ -70,7 +70,7 @@ const passPortId = (input: string) => {
   return /^[0-9]{9}$/.test(input);
 };
 
-assertEquals(hairColor('#1d23456'), true);
+strictEqual(hairColor('#1d23456'), true);
 
 const validateKey = (key: keyof typeof required, input: string): boolean => {
   console.log(key, input);

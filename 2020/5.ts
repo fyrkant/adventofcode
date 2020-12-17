@@ -1,6 +1,6 @@
-import { data } from './data/5.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
-import { ObjectKeys } from './types.d.ts';
+import { data } from './data/5';
+import { strictEqual } from 'assert';
+import { ObjectKeys } from './types.d';
 
 const testData = {
   BFFFBBFRRR: { row: 70, column: 7, id: 567 },
@@ -9,14 +9,12 @@ const testData = {
 };
 
 const getId = (input: string): number => {
-  const binaryString = input
-    .replaceAll(/(F|L)/g, '0')
-    .replaceAll(/(B|R)/g, '1');
+  const binaryString = input.replace(/(F|L)/g, '0').replace(/(B|R)/g, '1');
   return parseInt(binaryString, 2);
 };
 
 (Object.keys(testData) as ObjectKeys<typeof testData>).map((key) => {
-  assertEquals(getId(key), testData[key].id);
+  strictEqual(getId(key), testData[key].id);
 });
 
 const myId = data

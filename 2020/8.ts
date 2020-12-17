@@ -1,5 +1,5 @@
-import { data } from './data/8.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { data } from './data/8';
+import { strictEqual } from 'assert';
 
 const parseLine = (input: string): { instruction: string; arg: number } => {
   const [instruction, arg] = input.split(' ');
@@ -7,10 +7,10 @@ const parseLine = (input: string): { instruction: string; arg: number } => {
   return { instruction, arg: parseInt(arg, 10) };
 };
 
-assertEquals(parseLine('nop +0'), { instruction: 'nop', arg: 0 });
-assertEquals(parseLine('jmp +4'), { instruction: 'jmp', arg: 4 });
-assertEquals(parseLine('acc -99'), { instruction: 'acc', arg: -99 });
-assertEquals(parseLine('acc +1'), { instruction: 'acc', arg: 1 });
+strictEqual(parseLine('nop +0'), { instruction: 'nop', arg: 0 });
+strictEqual(parseLine('jmp +4'), { instruction: 'jmp', arg: 4 });
+strictEqual(parseLine('acc -99'), { instruction: 'acc', arg: -99 });
+strictEqual(parseLine('acc +1'), { instruction: 'acc', arg: 1 });
 
 const getAcc = (array: ReturnType<typeof parseLine>[]): number | false => {
   let acc = 0;
@@ -72,6 +72,6 @@ const getRealAcc = (arr: ReturnType<typeof parseLine>[]) => {
   }
 };
 
-assertEquals(getRealAcc(testData.split('\n').map(parseLine)), 8);
+strictEqual(getRealAcc(testData.split('\n').map(parseLine)), 8);
 
-assertEquals(getRealAcc(data.split('\n').map(parseLine)), 2477);
+strictEqual(getRealAcc(data.split('\n').map(parseLine)), 2477);

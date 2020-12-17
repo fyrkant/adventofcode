@@ -74,4 +74,4 @@ const testData2 = {
 //   assertEquals(doTheThing(makeData(key), 30000000), val);
 // });
 
-console.log(doTheThingMap(makeData(data), 30000000));
+console.log(doTheThingMap(makeData('0,3,6'), 30000000));

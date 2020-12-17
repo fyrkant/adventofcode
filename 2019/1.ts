@@ -1,6 +1,6 @@
-import { data } from './data/1.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
-import { splitMap } from '../utils.ts';
+import { data } from './data/1';
+import { strictEqual } from 'assert';
+import { splitMap } from '../utils';
 
 const parseLine = (input: string) => parseInt(input, 10);
 
@@ -17,8 +17,8 @@ const getFuel = (input: number): number => {
   return y < 0 ? x : x + getFuel(x);
 };
 
-assertEquals(doCalc(12), 2);
-assertEquals(doCalc(14), 2);
+strictEqual(doCalc(12), 2);
+strictEqual(doCalc(14), 2);
 
 const sum = arr.reduce((p, c) => p + getFuel(c), 0);
 

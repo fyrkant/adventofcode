@@ -1,6 +1,6 @@
-import { data } from './data/11.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
-import { splitMap } from '../utils.ts';
+import { data } from './data/11';
+import { strictEqual } from 'assert';
+import { splitMap } from '../utils';
 
 const floor = '.';
 const emptySeat = 'L';
@@ -119,10 +119,10 @@ const countSurroundingSeats = (
   }, 0 as number);
 };
 
-assertEquals(countSurroundingSeats(makeData(testData), 0, 0), 0);
-assertEquals(countSurroundingSeats(makeData(testData2), 0, 0), 2);
-assertEquals(countSurroundingSeats(makeData(testData2), 1, 2), 5);
-assertEquals(countSurroundingSeats(makeData(testData2), 4, 9), 5);
+strictEqual(countSurroundingSeats(makeData(testData), 0, 0), 0);
+strictEqual(countSurroundingSeats(makeData(testData2), 0, 0), 2);
+strictEqual(countSurroundingSeats(makeData(testData2), 1, 2), 5);
+strictEqual(countSurroundingSeats(makeData(testData2), 4, 9), 5);
 
 const countSeenSurrounding = (
   arr: string[][],
@@ -155,7 +155,7 @@ const countSeenSurrounding = (
   }, 0 as number);
 };
 
-assertEquals(
+strictEqual(
   countSeenSurrounding(
     makeData(`.............
 .L.L.#.#.#.#.
@@ -165,7 +165,7 @@ assertEquals(
   ),
   0
 );
-assertEquals(
+strictEqual(
   countSeenSurrounding(
     makeData(`.......#.
 ...#.....
@@ -201,13 +201,13 @@ const applySeatingRules = (input: string[][]) => {
   return result;
 };
 
-// assertEquals(applySeatingRules(makeData(testData)), makeData(testData2));
-// assertEquals(applySeatingRules(makeData(testData2)), makeData(testData3));
-// assertEquals(applySeatingRules(makeData(testData3)), makeData(testData4));
-// assertEquals(applySeatingRules(makeData(testData4)), makeData(testData5));
-// assertEquals(applySeatingRules(makeData(testData5)), makeData(testData6));
-// assertEquals(applySeatingRules(makeData(testData6)), makeData(testData6));
-// // assertEquals(
+// strictEqual(applySeatingRules(makeData(testData)), makeData(testData2));
+// strictEqual(applySeatingRules(makeData(testData2)), makeData(testData3));
+// strictEqual(applySeatingRules(makeData(testData3)), makeData(testData4));
+// strictEqual(applySeatingRules(makeData(testData4)), makeData(testData5));
+// strictEqual(applySeatingRules(makeData(testData5)), makeData(testData6));
+// strictEqual(applySeatingRules(makeData(testData6)), makeData(testData6));
+// // strictEqual(
 //   applySeatingRules(makeData(testData3)),
 //   makeData(testData4),
 //   "third",
@@ -251,7 +251,7 @@ const countOccupiedSeats = (input: string[][]): number => {
   }, 0);
 };
 
-// assertEquals(countOccupiedSeats(makeData(testData6)), 37);
+// strictEqual(countOccupiedSeats(makeData(testData6)), 37);
 
-// assertEquals(countOccupiedSeats(runUntilSameReturn(makeData(testData))), 37);
-assertEquals(countOccupiedSeats(runUntilSameReturn(makeData(data))), 2234);
+// strictEqual(countOccupiedSeats(runUntilSameReturn(makeData(testData))), 37);
+strictEqual(countOccupiedSeats(runUntilSameReturn(makeData(data))), 2234);

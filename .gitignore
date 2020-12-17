@@ -1,0 +1,41 @@
+# dependencies
+node_modules
+yarn*.log
+lerna*.log
+package-lock.json
+
+# testing
+coverage
+report.*.json
+
+# production
+build
+dist
+storybook-static
+
+# misc
+.vscode
+.DS_Store
+.env*
+npm-debug.log*
+partner-portal-web.code-workspace
+
+# Chrome userdata
+.vscode/Chrome
+
+# TypeScript build folder
+ts-build
+
+# WebPack cache
+.cache-loader
+
+# WebStorm
+.idea/
+
+# Cypress
+cypress/videos
+cypress/screenshots
+cypress.env.json
+
+#JUnit reports
+reports

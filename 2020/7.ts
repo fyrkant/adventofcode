@@ -1,5 +1,5 @@
-import { data } from './data/7.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
+import { data } from './data/7';
+import { strictEqual } from 'assert';
 
 const getSplitLine = (input: string): [string, string] => {
   const [start, end] = input.split('bags contain');
@@ -33,7 +33,7 @@ const parseLine = (input: string): [string, Map<string, number>] => {
   return [color, getBagMap(rest)];
 };
 
-assertEquals(
+strictEqual(
   parseLine('light red bags contain 1 bright white bag, 2 muted yellow bags.'),
   [
     'light red',
@@ -43,7 +43,7 @@ assertEquals(
     ]),
   ]
 );
-assertEquals(parseLine('faded blue bags contain no other bags.'), [
+strictEqual(parseLine('faded blue bags contain no other bags.'), [
   'faded blue',
   new Map(),
 ]);
@@ -83,8 +83,8 @@ vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
 faded blue bags contain no other bags.
 dotted black bags contain no other bags.`;
 
-assertEquals(searchColor('shiny gold', makeDataMap(testData)).size, 4);
-assertEquals(searchColor('shiny gold', makeDataMap(data)).size, 126);
+strictEqual(searchColor('shiny gold', makeDataMap(testData)).size, 4);
+strictEqual(searchColor('shiny gold', makeDataMap(data)).size, 126);
 
 const countBags = (
   searchInput: string,
@@ -110,6 +110,6 @@ dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags.`;
 
-assertEquals(countBags('shiny gold', makeDataMap(testData2)), 126);
+strictEqual(countBags('shiny gold', makeDataMap(testData2)), 126);
 
 console.log(countBags('shiny gold', makeDataMap(data)));

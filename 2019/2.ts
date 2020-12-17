@@ -1,6 +1,6 @@
-import { data } from './data/2.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
-import { splitMap } from '../utils.ts';
+import { data } from './data/2';
+import { strictEqual } from 'assert';
+import { splitMap } from '../utils';
 
 const compute = (input: number[]) => {
   let index = 0;
@@ -35,7 +35,7 @@ const compute = (input: number[]) => {
 const strToData = (input: string) =>
   splitMap(input, (x) => parseInt(x, 10), ',');
 
-assertEquals(compute(strToData('1,9,10,3,2,3,11,0,99,30,40,50')), 3500);
+strictEqual(compute(strToData('1,9,10,3,2,3,11,0,99,30,40,50')), 3500);
 const d = strToData(data);
 const d2 = [d[0], 12, 2, ...d.slice(3)];
 
@@ -56,7 +56,7 @@ const computeWithInput = (
   return compute(d2);
 };
 
-assertEquals(computeWithInput(strToData(data), [1, 12], [2, 2]), 4945026);
+strictEqual(computeWithInput(strToData(data), [1, 12], [2, 2]), 4945026);
 
 const findNounAndVerb = (input: number[], goalNum: number) => {
   for (let noun = 0; noun < 100; noun++) {
@@ -70,4 +70,4 @@ const findNounAndVerb = (input: number[], goalNum: number) => {
   }
 };
 
-assertEquals(findNounAndVerb(strToData(data), 19690720), 5296);
+strictEqual(findNounAndVerb(strToData(data), 19690720), 5296);

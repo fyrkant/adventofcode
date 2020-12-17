@@ -1,6 +1,6 @@
-import { data } from './data/9.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
-import { splitMap } from '../utils.ts';
+import { data } from './data/9';
+import { strictEqual } from 'assert';
+import { splitMap } from '../utils';
 
 const parseLine = (input: string): number => {
   return parseInt(input, 10);
@@ -45,7 +45,7 @@ const checkIsSumOfSomeTwo = (
 //   nums.reduce((prev, ))
 // }
 
-// assertEquals(
+// strictEqual(
 //   checkIsSumOfSomeTwo(127, 0, splitMap(testData, parseLine).slice(0, 5)),
 //   true,
 // );
@@ -110,7 +110,7 @@ const findSet = (
       }
     }
 
-    setTimeout(() => {
+    setImmediate(() => {
       return findSet(sum, nums, startIndex, endIndex + 1).then(res, rej);
     });
   });
@@ -171,20 +171,20 @@ const doStuff2 = (arr: number[], num: number) => {
   return typeof inds !== 'boolean' && getSumOfTwo(arr, inds);
 };
 
-// assertEquals(findSet(127, splitMap(testData, parseLine), 0, 1), [2, 5]);
-// assertEquals(doStuff(splitMap(testData, parseLine), 127), 62);
+// strictEqual(findSet(127, splitMap(testData, parseLine), 0, 1), [2, 5]);
+// strictEqual(doStuff(splitMap(testData, parseLine), 127), 62);
 // console.log(splitMap(data, parseLine).indexOf(90433990));
 
 const test = async (input: string, num: number, expectedNum: number) => {
   return doStuff(splitMap(input, parseLine), num).then((v) => {
     // console.log({ v });
-    assertEquals(v, expectedNum);
+    strictEqual(v, expectedNum);
   });
 };
 const test2 = async (input: string, num: number, expectedNum: number) => {
   const v = doStuff2(splitMap(input, parseLine), num);
   // console.log({ v });
-  assertEquals(v, expectedNum);
+  strictEqual(v, expectedNum);
 };
 
 // findSet(127, splitMap(testData, parseLine), 0, 1).then((x) => {

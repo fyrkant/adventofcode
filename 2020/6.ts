@@ -1,6 +1,6 @@
-import { data } from './data/6.ts';
-import { assertEquals } from 'https://deno.land/std@0.79.0/testing/asserts.ts';
-import { unique } from '../utils.ts';
+import { data } from './data/6';
+import { strictEqual } from 'assert';
+import { unique } from '../utils';
 
 const getArrayOfObjects = (input: string): string[][] => {
   const splat = input.split('\n');
@@ -35,7 +35,7 @@ const filterForAllHas = (x: string[][]) => {
   });
 };
 
-assertEquals(filterForAllHas([['abc'], ['a', 'b', 'c'], ['ab', 'ac']]), [
+strictEqual(filterForAllHas([['abc'], ['a', 'b', 'c'], ['ab', 'ac']]), [
   ['a', 'b', 'c'],
   [],
   ['a'],

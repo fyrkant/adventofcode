@@ -1,4 +1,4 @@
-import { data } from './data/1.ts';
+import { data } from './data/1';
 
 const result = data.reduce((prev: undefined | number, cur, index) => {
   if (typeof prev !== 'undefined') {
