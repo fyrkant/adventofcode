@@ -10,15 +10,41 @@ const testData = `.#.
 ..#
 ###`;
 
-const makeData = (input: string) => {
-  return splitMap(input, (x) => x.split(''));
+const makeEmptyLine = (len: number): string[] => _.times(len, _.constant('.'));
+
+const makeEmptyGrid = (len: number, lineLen = len): string[][] =>
+  _.times(len, () => makeEmptyLine(lineLen));
+
+const makeData = (input: string, pad: number): string[][] => {
+  const x = splitMap(input, (x) => [
+    ...new Array(pad).fill('.'),
+    ...x.split(''),
+    ...new Array(pad).fill('.'),
+  ]);
+  const y = [
+    ..._.times(pad, () => makeEmptyLine(x.length + pad * 2)),
+    ...x,
+    ..._.times(pad, () => makeEmptyLine(x.length + pad * 2)),
+  ];
+
+  return y;
 };
 
-deepStrictEqual(makeData(testData), [
-  ['.', '#', '.'],
-  ['.', '.', '#'],
-  ['#', '#', '#'],
-]);
+deepStrictEqual(
+  makeData(testData, 3)
+    .map((l) => l.join(''))
+    .join('\n')
+    .toString(),
+  `.........
+.........
+.........
+....#....
+.....#...
+...###...
+.........
+.........
+.........`
+);
 
 const getFromDelta = (
   grid: string[][],
@@ -33,6 +59,7 @@ const getFromDelta = (
 };
 
 const countSurroundingCubes2d = (
+  zDelta: number,
   arr: string[][],
   lineIndex: number,
   cubeIndex: number
@@ -42,6 +69,7 @@ const countSurroundingCubes2d = (
     [-1, 0],
     [-1, 1],
     [0, -1],
+    [0, 0],
     [0, 1],
     [1, -1],
     [1, 0],
@@ -49,6 +77,9 @@ const countSurroundingCubes2d = (
   ];
 
   return deltas.reduce((p, [newLineIndex, newCubeIndex]) => {
+    if (zDelta === 0 && newLineIndex === 0 && newCubeIndex === 0) {
+      return p;
+    }
     const newCube = getFromDelta(arr, [
       lineIndex + newLineIndex,
       cubeIndex + newCubeIndex,
@@ -65,65 +96,64 @@ const countSurroundingCubes3d = (
   lineIndex: number,
   cubeIndex: number
 ) => {
+  const zDeltas = [-1, 0, 1];
   let count = 0;
-  for (let zDelta = -1; zDelta < 2; zDelta++) {
+  zDeltas.forEach((zDelta) => {
     const grid = dimension[zIndex + zDelta];
-    if (zDelta !== 0 && dimension.length < 4) {
-      const initialGrid = dimension[1];
+    // if (zDelta !== 0 && dimension.length < 4) {
+    //   const initialGrid = dimension[1];
 
+    //   count =
+    //     count + countSurroundingCubes2d(initialGrid, lineIndex, cubeIndex);
+    // } else
+    if (grid) {
       count =
-        count + countSurroundingCubes2d(initialGrid, lineIndex, cubeIndex);
-    } else if (grid) {
-      count = count + countSurroundingCubes2d(grid, lineIndex, cubeIndex);
+        count + countSurroundingCubes2d(zDelta, grid, lineIndex, cubeIndex);
     }
-  }
+  });
+
   return count;
 };
 
-const makeEmptyGrid = (len: number) =>
-  new Array(len).fill(new Array(len).fill('.'));
 const makePocketDimension = (startingDimension: string[][][]): string[][][] => {
   const lineLength = startingDimension[startingDimension.length - 1].length;
   let dimension = [
-    startingDimension[0],
+    makeEmptyGrid(lineLength),
     ..._.cloneDeep(startingDimension),
-    startingDimension[startingDimension.length - 1],
+    makeEmptyGrid(lineLength),
   ];
-  let result: string[][][] = [];
+  const result: string[][][] = [];
+  debugger;
   for (let i = 0; i < startingDimension.length + 2; i++) {
     result.push(makeEmptyGrid(lineLength));
   }
   debugger;
   for (let zIndex = 0; zIndex < dimension.length; zIndex++) {
     let grid = dimension[zIndex];
-    // if (!grid) {
-    //   grid = _.cloneDeep(emptyGrid);
-    //   dimension = [
-    //     ...dimension.slice(0, zIndex),
-    //     grid,
-    //     ...dimension.slice(zIndex),
-    //   ];
-    // }
     for (let lineIndex = 0; lineIndex < grid.length; lineIndex++) {
       const cubes = grid[lineIndex];
       for (let cubeIndex = 0; cubeIndex < cubes.length; cubeIndex++) {
         const cube = cubes[cubeIndex];
+
         const surroundingActiveCubeCount = countSurroundingCubes3d(
           dimension,
           zIndex,
           lineIndex,
           cubeIndex
         );
+        let newStatus = null;
         if (cube === active) {
-          result[zIndex][lineIndex][cubeIndex] =
-            surroundingActiveCubeCount < 1 && surroundingActiveCubeCount < 4
+          newStatus =
+            surroundingActiveCubeCount === 2 || surroundingActiveCubeCount === 3
               ? active
               : inactive;
-        } else if (cube === inactive && surroundingActiveCubeCount === 3) {
-          result[zIndex][lineIndex][cubeIndex] = active;
+        } else {
+          newStatus = surroundingActiveCubeCount === 3 ? active : inactive;
         }
-        console.log(zIndex);
-        result[zIndex][lineIndex][cubeIndex] = cube;
+        result[zIndex][lineIndex][cubeIndex] = newStatus;
+        if (newStatus === active) {
+          debugger;
+        }
       }
     }
   }
@@ -131,8 +161,41 @@ const makePocketDimension = (startingDimension: string[][][]): string[][][] => {
   return result;
 };
 
-console.log(
-  makePocketDimension([makeData(testData)])
-    .map((grid) => grid.map((line) => line.join('')).join('\n'))
-    .join('\n\n')
-);
+const countAll = (xs: string[][][]): number => {
+  return xs.reduce((pg, g) => {
+    return (
+      pg +
+      g.reduce((pl, l) => {
+        return (
+          pl +
+          l.reduce((pc, c) => {
+            return pc + (c === active ? 1 : 0);
+          }, 0)
+        );
+      }, 0)
+    );
+  }, 0);
+};
+
+// console.log('all', countAll([makeData(testData, 3)]));
+
+const runCyclesAndCount = (input: string, cycles: number) => {
+  let d = [makeData(input, 40)];
+
+  console.log(countAll(d));
+  _.times(cycles, () => {
+    debugger;
+    d = makePocketDimension(d);
+    console.log(countAll(d));
+  });
+
+  return countAll(d);
+};
+
+console.log(runCyclesAndCount(data, 6));
+
+// console.log(
+//   makePocketDimension([makeData(testData, 6)])
+//     .map((grid) => grid.map((line) => line.join('')).join('\n'))
+//     .join('\n\n')
+// );
