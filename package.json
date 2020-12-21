@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "lodash": "^4.17.20",
-    "ramda": "^0.27.1",
     "remeda": "0.0.27"
   }
 }
