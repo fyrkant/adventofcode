@@ -1,7 +1,7 @@
-import { data } from './data/17';
 import { strictEqual, deepStrictEqual } from 'assert';
-import { splitMap } from '../utils';
 import _, { zipObject } from 'lodash';
+import { data } from './data/17';
+import { splitMap } from '../utils';
 
 const active = '#';
 const inactive = '.';
@@ -16,10 +16,10 @@ const makeEmptyGrid = (len: number, lineLen = len): string[][] =>
   _.times(len, () => makeEmptyLine(lineLen));
 
 const makeData = (input: string, pad: number): string[][] => {
-  const x = splitMap(input, (x) => [
-    ...new Array(pad).fill('.'),
-    ...x.split(''),
-    ...new Array(pad).fill('.'),
+  const x = splitMap(input, (v) => [
+    ...new Array<string>(pad).fill('.'),
+    ...v.split(''),
+    ...new Array<string>(pad).fill('.'),
   ]);
   const y = [
     ..._.times(pad, () => makeEmptyLine(x.length + pad * 2)),
@@ -107,8 +107,7 @@ const countSurroundingCubes3d = (
     //     count + countSurroundingCubes2d(initialGrid, lineIndex, cubeIndex);
     // } else
     if (grid) {
-      count =
-        count + countSurroundingCubes2d(zDelta, grid, lineIndex, cubeIndex);
+      count += countSurroundingCubes2d(zDelta, grid, lineIndex, cubeIndex);
     }
   });
 
@@ -117,7 +116,7 @@ const countSurroundingCubes3d = (
 
 const makePocketDimension = (startingDimension: string[][][]): string[][][] => {
   const lineLength = startingDimension[startingDimension.length - 1].length;
-  let dimension = [
+  const dimension = [
     makeEmptyGrid(lineLength),
     ..._.cloneDeep(startingDimension),
     makeEmptyGrid(lineLength),
@@ -129,7 +128,7 @@ const makePocketDimension = (startingDimension: string[][][]): string[][][] => {
   }
   debugger;
   for (let zIndex = 0; zIndex < dimension.length; zIndex++) {
-    let grid = dimension[zIndex];
+    const grid = dimension[zIndex];
     for (let lineIndex = 0; lineIndex < grid.length; lineIndex++) {
       const cubes = grid[lineIndex];
       for (let cubeIndex = 0; cubeIndex < cubes.length; cubeIndex++) {

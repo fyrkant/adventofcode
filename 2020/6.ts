@@ -1,5 +1,5 @@
-import { data } from './data/6';
 import { strictEqual } from 'assert';
+import { data } from './data/6';
 import { unique } from '../utils';
 
 const getArrayOfObjects = (input: string): string[][] => {
@@ -8,32 +8,31 @@ const getArrayOfObjects = (input: string): string[][] => {
   const dividedStrings = splat.reduce((prev, curr) => {
     if (curr === '') {
       return [...prev, []];
-    } else {
-      const prevArr = prev[prev.length - 1] || [];
-      const newNext = [...prevArr, curr.trim()].reduce((p, c) => {
-        return [...p, c];
-      }, [] as string[]);
-      prev[Math.max(prev.length - 1, 0)] = newNext;
-
-      return prev;
     }
+    const prevArr = prev[prev.length - 1] || [];
+    const newNext = [...prevArr, curr.trim()].reduce(
+      (p, c) => [...p, c],
+      [] as string[]
+    );
+    prev[Math.max(prev.length - 1, 0)] = newNext;
+
+    return prev;
   }, [] as string[][]);
 
   return dividedStrings;
 };
 
-const filterForAllHas = (x: string[][]) => {
-  return x.map((v) => {
-    return v.reduce((p, c) => {
+const filterForAllHas = (x: string[][]) =>
+  x.map((v) =>
+    v.reduce((p, c) => {
       const splitCurr = c.split('');
 
       return unique([
         ...p,
-        ...splitCurr.filter((x) => v.every((y) => y.includes(x))),
+        ...splitCurr.filter((xx) => v.every((y) => y.includes(xx))),
       ]);
-    }, [] as string[]);
-  });
-};
+    }, [] as string[])
+  );
 
 strictEqual(filterForAllHas([['abc'], ['a', 'b', 'c'], ['ab', 'ac']]), [
   ['a', 'b', 'c'],
@@ -42,9 +41,7 @@ strictEqual(filterForAllHas([['abc'], ['a', 'b', 'c'], ['ab', 'ac']]), [
 ]);
 
 const getCount = (input: string[][]) =>
-  input.reduce((prev, curr) => {
-    return prev + curr.length;
-  }, 0 as number);
+  input.reduce((prev, curr) => prev + curr.length, 0 as number);
 
 const testData = `abc
 

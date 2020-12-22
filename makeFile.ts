@@ -15,9 +15,9 @@ if (existsSync(codeFilePath) || existsSync(dataFilePath)) {
 
 writeFileSync(
   codeFilePath,
-  `import { data } from './data/${day}';
+  `import { dataString } from './data/${day}';
 import { strictEqual } from 'assert';`
 );
-writeFileSync(dataFilePath, 'export const data = ``;');
+writeFileSync(dataFilePath, 'export const dataString = ``;');
 
 export {};

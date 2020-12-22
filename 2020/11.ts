@@ -1,5 +1,5 @@
-import { data } from './data/11';
 import { strictEqual } from 'assert';
+import { data } from './data/11';
 import { splitMap } from '../utils';
 
 const floor = '.';

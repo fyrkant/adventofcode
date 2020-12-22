@@ -1,5 +1,5 @@
-import { data } from './data/10';
 import { strictEqual } from 'assert';
+import { data } from './data/10';
 import { splitMap } from '../utils';
 
 const parseLine = (input: string) => {
@@ -33,9 +33,9 @@ const getJolts = (input: number[], start = 0) => {
     const diff = curr - prev;
 
     if (diff === 1) {
-      result['one'] += 1;
+      result.one += 1;
     } else if (diff === 3) {
-      result['three'] += 1;
+      result.three += 1;
     } else if (diff > 3 || diff < 1) {
       return false;
     }
@@ -101,9 +101,9 @@ const countArrangements = (
   for (let index = startIndex + 1; index < arr.length; index++) {
     if (arr[index] - arr[startIndex] < 4) {
       if (index === arr.length - 1) {
-        count = count + 1;
+        count += 1;
       } else {
-        count = count + countArrangements(arr, index, map);
+        count += countArrangements(arr, index, map);
       }
     }
   }

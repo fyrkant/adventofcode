@@ -1,5 +1,5 @@
-import { data } from './data/8';
 import { strictEqual } from 'assert';
+import { data } from './data/8';
 
 const parseLine = (input: string): { instruction: string; arg: number } => {
   const [instruction, arg] = input.split(' ');
@@ -27,14 +27,14 @@ const getAcc = (array: ReturnType<typeof parseLine>[]): number | false => {
 
     switch (element.instruction) {
       case 'nop':
-        index = index + 1;
+        index += 1;
         break;
       case 'acc':
-        acc = acc + element.arg;
-        index = index + 1;
+        acc += element.arg;
+        index += 1;
         break;
       case 'jmp':
-        index = index + element.arg;
+        index += element.arg;
         break;
       default:
         break;

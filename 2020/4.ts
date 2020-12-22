@@ -1,5 +1,5 @@
-import { data } from './data/4';
 import { strictEqual } from 'assert';
+import { data } from './data/4';
 import { ObjectKeys } from './types.d';
 
 const required = {
@@ -22,19 +22,17 @@ iyr:2019
 hcl:#602927 eyr:1967 hgt:170cm
 ecl:grn pid:012533040 byr:1946`;
 
-const parseLine = (line: string) => {
-  return line.split(' ').reduce((prev, curr) => {
+const parseLine = (line: string) =>
+  line.split(' ').reduce((prev, curr) => {
     const [key, val] = curr.split(':');
 
     const ret = { ...prev, [key]: val };
 
     return ret;
   }, {} as Record<string, string>);
-};
 
-const minMax = (input: number, min: number, max: number) => {
-  return input >= min && input <= max;
-};
+const minMax = (input: number, min: number, max: number) =>
+  input >= min && input <= max;
 
 const yearBetween = (input: string, min: number, max: number) => {
   const num = parseInt(input, 10);
@@ -66,9 +64,7 @@ const eyeColor = (input: string) => {
   return approved.includes(input);
 };
 
-const passPortId = (input: string) => {
-  return /^[0-9]{9}$/.test(input);
-};
+const passPortId = (input: string) => /^[0-9]{9}$/.test(input);
 
 strictEqual(hairColor('#1d23456'), true);
 
@@ -105,9 +101,8 @@ const validatePassport = (pass: Partial<Record<string, string>>): boolean => {
   const keys = Object.keys(pass);
 
   const { cid, ...restReq } = required;
-  const requiredKeys = Object.keys(restReq) as ObjectKeys<
-    Omit<typeof required, 'cid'>
-  >;
+  type NoId = Omit<typeof required, 'cid'>;
+  const requiredKeys = Object.keys(restReq) as ObjectKeys<NoId>;
 
   return requiredKeys.reduce((p, c) => {
     const val = pass[c];
@@ -122,18 +117,18 @@ const getArrayOfObjects = (input: string): Array<Partial<typeof required>> => {
   const dividedStrings = splat.reduce((prev, curr) => {
     if (curr === '') {
       return [...prev, []];
-    } else {
-      const prevArr = prev[prev.length - 1] || [];
-      prev[Math.max(prev.length - 1, 0)] = [...prevArr, curr];
-
-      return prev;
     }
+    const prevArr = prev[prev.length - 1] || [];
+    prev[Math.max(prev.length - 1, 0)] = [...prevArr, curr];
+
+    return prev;
   }, [] as Array<string[]>);
 
   const objects = dividedStrings.reduce((prev, current) => {
-    const obj = current.reduce((p, c) => {
-      return { ...p, ...parseLine(c) };
-    }, {} as Partial<typeof required>);
+    const obj = current.reduce(
+      (p, c) => ({ ...p, ...parseLine(c) }),
+      {} as Partial<typeof required>
+    );
 
     return [...prev, obj];
   }, [] as Array<Partial<typeof required>>);

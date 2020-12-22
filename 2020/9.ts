@@ -1,5 +1,5 @@
-import { data } from './data/9';
 import { strictEqual } from 'assert';
+import { data } from './data/9';
 import { splitMap } from '../utils';
 
 const parseLine = (input: string): number => {
@@ -89,7 +89,7 @@ const findSet = (
     let acc = 0;
     for (let index = startIndex; index < endIndex; index++) {
       const element = nums[index];
-      acc = acc + element;
+      acc += element;
 
       if (isNaN(acc)) {
         throw new Error();
@@ -101,7 +101,8 @@ const findSet = (
           return rej(false);
         }
         return findSet(sum, nums, startIndex + 1, nextEndIndex).then(res, rej);
-      } else if (acc === sum) {
+      }
+      if (acc === sum) {
         const ret = [startIndex, endIndex - 1] as [number, number];
         console.log('YESSSS!!!', { ret });
         res(ret);

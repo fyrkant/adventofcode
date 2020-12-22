@@ -1,5 +1,5 @@
-import { data } from './data/7';
 import { strictEqual } from 'assert';
+import { data } from './data/7';
 
 const getSplitLine = (input: string): [string, string] => {
   const [start, end] = input.split('bags contain');
@@ -12,19 +12,18 @@ const getSplitLine = (input: string): [string, string] => {
 
 const getBagMap = (input: string): Map<string, number> => {
   if (input === 'no other bags') {
-    return new Map();
-  } else {
-    const map = new Map<string, number>();
-
-    for (const c of input.split(', ')) {
-      const [, count] = /^([0-9])+/.exec(c) || [];
-      const color = c.slice(c.indexOf(count) + 1, c.length - 4).trim();
-
-      map.set(color, parseInt(count, 10));
-    }
-
-    return map;
+    return new Map<string, number>();
   }
+  const map = new Map<string, number>();
+
+  for (const c of input.split(', ')) {
+    const [, count] = /^([0-9])+/.exec(c) || [];
+    const color = c.slice(c.indexOf(count) + 1, c.length - 4).trim();
+
+    map.set(color, parseInt(count, 10));
+  }
+
+  return map;
 };
 
 const parseLine = (input: string): [string, Map<string, number>] => {

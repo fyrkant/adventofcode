@@ -1,5 +1,5 @@
-import { data } from './data/5';
 import { strictEqual } from 'assert';
+import { data } from './data/5';
 import { ObjectKeys } from './types.d';
 
 const testData = {
@@ -13,15 +13,13 @@ const getId = (input: string): number => {
   return parseInt(binaryString, 2);
 };
 
-(Object.keys(testData) as ObjectKeys<typeof testData>).map((key) => {
+(Object.keys(testData) as ObjectKeys<typeof testData>).forEach((key) => {
   strictEqual(getId(key), testData[key].id);
 });
 
 const myId = data
   .split('\n')
-  .map((val) => {
-    return getId(val);
-  })
+  .map((val) => getId(val))
   .sort((a, b) => a - b)
   .reduce((prev, curr, index, arr) => {
     const next = arr[index + 1];

@@ -1,5 +1,5 @@
-import { data } from './data/12';
 import { strictEqual } from 'assert';
+import { data } from './data/12';
 import { splitMap } from '../utils';
 
 const parseLine = (input: string): [string, number] => {
@@ -131,8 +131,10 @@ const moveFromInstruction = (
     case 'F': {
       return [waypoint, moveToWaypoint(arg, waypoint, ferryPosition)];
     }
+    default: {
+      return [waypoint, ferryPosition];
+    }
   }
-  return [waypoint, ferryPosition];
 };
 
 const moveFerry = (instructions: ReturnType<typeof parseLine>[]) => {

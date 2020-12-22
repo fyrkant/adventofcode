@@ -35,7 +35,7 @@ const findRealIndices = (
   record: Record<string, string[]>
 ): Record<string, string[]> => {
   let entries = Object.entries(record);
-  let finalEntries: [string, string[]][] = [];
+  const finalEntries: [string, string[]][] = [];
   while (true) {
     const single = entries.find(([, val]) => val.length === 1);
     if (!single) {

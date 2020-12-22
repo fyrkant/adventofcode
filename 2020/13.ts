@@ -1,5 +1,5 @@
-import { data } from './data/13';
 import { strictEqual } from 'assert';
+import { data } from './data/13';
 
 import { splitMap } from '../utils';
 
@@ -89,7 +89,7 @@ const allMatch = (
 const doAllMatch = (os: number, buses: ReturnType<typeof getBuses>) => (
   timestamp: number
 ): boolean => {
-  let strs = [];
+  const strs = [];
   for (let index = 0; index < buses.length; index++) {
     const [id, offset] = buses[index];
     strs.push(`(timestamp + ${offset} - ${os}) % ${id} === 0`);
@@ -134,9 +134,8 @@ const findEarliestTimestamp = (start: number): number => {
     ) {
       console.log('WOW!!!', { timestamp: timestamp - initial, count });
       return timestamp - initial;
-    } else {
-      timestamp = timestamp + initial;
     }
+    timestamp += initial;
   }
 };
 

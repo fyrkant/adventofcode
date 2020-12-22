@@ -1,12 +1,11 @@
-import { data } from './data/18';
 import { strictEqual } from 'assert';
+import { data } from './data/18';
 import { splitMap } from '../utils';
-import _, { find, result } from 'lodash';
 
 const testData = '1 + 2 * 3 + 4 * 5 + 6'; // 71
 const testData2 = '1 + (2 * 3) + (4 * (5 + 6))'; // 51
-const testData3 = '5 + (8 * 3 + 9 + 3 * 4 * 3)'; //437
-const testData4 = '((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2'; //13632
+const testData3 = '5 + (8 * 3 + 9 + 3 * 4 * 3)'; // 437
+const testData4 = '((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2'; // 13632
 
 const numberRegex = /[0-9]/;
 
@@ -15,7 +14,7 @@ const removeSubstring = (input: string, index: number) => {
 };
 
 const findAllGroups = (input: string, operators: string[]) => {
-  let res = [];
+  const res = [];
   let parens = 0;
   let currentChunk = '';
   for (let index = 0; index < input.length; index++) {
@@ -42,7 +41,7 @@ const findAllGroups = (input: string, operators: string[]) => {
       currentChar !== ')' &&
       currentChar !== ' '
     ) {
-      currentChunk = currentChunk + currentChar;
+      currentChunk += currentChar;
     }
   }
   if (currentChunk !== '') {
@@ -53,6 +52,7 @@ const findAllGroups = (input: string, operators: string[]) => {
 
 const tryEval = (input: string) => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return,no-eval,@typescript-eslint/no-unsafe-return
     return eval(input);
   } catch (error) {
     return false;

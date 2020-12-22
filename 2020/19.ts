@@ -1,7 +1,6 @@
-import { data } from './data/19';
 import { strictEqual } from 'assert';
 import _ from 'lodash';
-import R from 'ramda';
+import { data } from './data/19';
 
 const testDataString = `5: "b"
 0: 4 1 5
@@ -41,9 +40,9 @@ const compileRule = (
   const ruleParts = r.split(' | ');
   debugger;
   const compiledMap = new Map<number, string[]>();
-  let compiledRules: string[][] = [];
+  const compiledRules: string[][] = [];
   for (let partIndex = 0; partIndex < ruleParts.length; partIndex++) {
-    let x = '';
+    const x = '';
     const part = ruleParts[partIndex];
     const rules = part.split(' ');
     for (let i = 0; i < rules.length; i++) {

@@ -28,8 +28,6 @@ const bigNum = [
   getResult(5),
   getResult(7),
   getResult(1, 2),
-].reduce((prev, curr) => {
-  return prev * curr.count;
-}, 1);
+].reduce((prev, curr) => prev * curr.count, 1);
 
 console.log(bigNum);

@@ -1,5 +1,5 @@
-import { data } from './data/16';
 import { deepStrictEqual, strictEqual } from 'assert';
+import { data } from './data/16';
 
 const parseRules = (input: string): Record<string, [string, string]> => {
   const xs = input.split('\n');
@@ -184,7 +184,7 @@ const matchesAllValuesOfIndex = (
 
 const findRealIndices = (record: Record<string, number[]>) => {
   let entries = Object.entries(record);
-  let finalEntries: [string, number[]][] = [];
+  const finalEntries: [string, number[]][] = [];
   while (true) {
     const single = entries.find(([, val]) => val.length === 1);
     if (!single) {
@@ -204,7 +204,7 @@ const findFieldIndices = (
 ): Record<string, number[]> => {
   const { rules, others, yours } = input;
 
-  const allTickets = others; //.concat([yours]);
+  const allTickets = others; // .concat([yours]);
   const ticketLength = allTickets[0].length;
 
   const result: Record<string, number[]> = {};

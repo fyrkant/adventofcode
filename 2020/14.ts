@@ -1,5 +1,5 @@
+import { strictEqual } from 'assert';
 import { data } from './data/14';
-import { strictEqual } from '../assert.bundle';
 
 const testData = `mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
 mem[8] = 11
@@ -7,6 +7,7 @@ mem[7] = 101
 mem[8] = 0`;
 
 const toBinary = (n: number) => {
+  // eslint-disable-next-line no-bitwise
   return (n >>> 0).toString(2).padStart(36, '0');
 };
 
@@ -37,7 +38,7 @@ strictEqual(makeData(testData), [
 ]);
 
 const maskBit = (value: number, mask: string) => {
-  const valueBits = toBinary(value).split(''); //.map((x) => parseInt(x, 10));
+  const valueBits = toBinary(value).split(''); // .map((x) => parseInt(x, 10));
 
   for (let index = 0; index < mask.length; index++) {
     const element = mask[index];
@@ -53,9 +54,9 @@ const maskBit = (value: number, mask: string) => {
 };
 
 const fact = (num: number) => {
-  var rval = 1;
+  let rval = 1;
   for (let i = 2; i <= num; i++) {
-    rval = rval * i;
+    rval *= i;
   }
   return rval;
 };
@@ -83,7 +84,7 @@ strictEqual(getAllCombinations(3), [
 ]);
 
 const getFloatingBitPositions = (value: number, mask: string): number[] => {
-  const valueBits = toBinary(value).split(''); //.map((x) => parseInt(x, 10));
+  const valueBits = toBinary(value).split(''); // .map((x) => parseInt(x, 10));
   const returnArr: number[] = [];
   let floatCount = 0;
   for (let index = 0; index < mask.length; index++) {
@@ -125,7 +126,7 @@ const maskBits = (input: ReturnType<typeof makeData>) => {
   }
   let sum = 0;
   for (const v of mem.values()) {
-    sum = sum + v;
+    sum += v;
   }
 
   return sum;
@@ -143,7 +144,7 @@ const maskFloatingBits = (input: ReturnType<typeof makeData>) => {
   }
   let sum = 0;
   for (const v of mem.values()) {
-    sum = sum + v;
+    sum += v;
   }
   return sum;
 };
