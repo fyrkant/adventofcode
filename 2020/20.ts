@@ -130,7 +130,8 @@ const makeData = (input: string): Tile[] => {
 const rotateGrid = (grid: string[][]) =>
   _.map(_.head(grid), (v, i) => _.reverse(_.map(grid, (row) => row[i])));
 
-const flipGrid = (grid: string[][]) => _.map(grid, _.reverse);
+const flipGrid = (grid: string[][], dir: 'vertical' | 'horizontal') =>
+  dir === 'vertical' ? _.map(grid, _.reverse) : R.reverse(grid);
 
 // const d = makeData(testData);
 
@@ -168,28 +169,28 @@ const findTopLeftCorner = (tiles: Tile[]): Tile | false => {
   }
   return false;
 };
-const findCorners = (tiles: Tile[]): Tile[] => {
-  const res: Tile[] = [];
-  for (const tile of tiles) {
-    const others = tiles.filter((t) => t.id !== tile.id);
-    const sides = getSides(tile.tiles);
-    const foundSides = sides
-      .map((s) => others.filter(findWithMatching(s)).map(R.prop('id')))
-      .filter((v) => v.length > 0);
-    if (foundSides.length === 2) {
-      res.push(tile);
-    }
-  }
-  return res;
-};
+// const findCorners = (tiles: Tile[]): Tile[] => {
+//   const res: Tile[] = [];
+//   for (const tile of tiles) {
+//     const others = tiles.filter((t) => t.id !== tile.id);
+//     const sides = getSides(tile.tiles);
+//     const foundSides = sides
+//       .map((s) => others.filter(findWithMatching(s)).map(R.prop('id')))
+//       .filter((v) => v.length > 0);
+//     if (foundSides.length === 2) {
+//       res.push(tile);
+//     }
+//   }
+//   return res;
+// };
 
-const findCornersSum = (tiles: Tile[]) => {
-  const res: number[][] = [];
-  const root = Math.sqrt(tiles.length);
+// const findCornersSum = (tiles: Tile[]) => {
+//   const res: number[][] = [];
+//   const root = Math.sqrt(tiles.length);
 
-  const corners = findCorners(tiles);
-  return corners.reduce((p, c) => p * c.id, 1);
-};
+//   const corners = findCorners(tiles);
+//   return corners.reduce((p, c) => p * c.id, 1);
+// };
 
 // const findTileNextToCurrent = (tile:Tile, p tiles:Tile[])
 type Pos = 't' | 'r' | 'b' | 'l';
@@ -227,7 +228,9 @@ const getTurns = (from: Pos, to: Pos) => {
   const fromIndex = positions.indexOf(from);
   const toIndex = positions.indexOf(to);
 
-  return positions.length + (toIndex - fromIndex);
+  const diff = toIndex - fromIndex;
+  const x = Math.sign(diff) === -1 ? positions.length + diff : diff;
+  return x;
 };
 
 const findAndRotate = (
@@ -237,25 +240,34 @@ const findAndRotate = (
 ): Tile | undefined => {
   const found = findAndGetSides(tiles, side);
   if (!found) return;
-  const [foundTile, pos, reverse] = found;
-
+  const [foundTile, pos, r] = found;
+  const reverse = false;
   if (pos === wantedPosition) {
     const x = {
       ...foundTile,
-      tiles: reverse ? flipGrid(foundTile.tiles) : foundTile.tiles,
+      tiles: reverse
+        ? flipGrid(
+            foundTile.tiles,
+            wantedPosition === 't' ? 'vertical' : 'horizontal'
+          )
+        : foundTile.tiles,
     };
     // debugger;
     return x;
   }
   const turns = getTurns(pos, wantedPosition);
-  let rotatedTiles = foundTile.tiles;
+  let rotatedTiles = R.clone(foundTile.tiles);
   R.times(turns, () => {
     rotatedTiles = rotateGrid(rotatedTiles);
   });
-
   return {
     ...foundTile,
-    tiles: reverse ? flipGrid(rotatedTiles) : rotatedTiles,
+    tiles: reverse
+      ? flipGrid(
+          rotatedTiles,
+          wantedPosition === 't' ? 'vertical' : 'horizontal'
+        )
+      : rotatedTiles,
   };
 };
 
@@ -282,7 +294,6 @@ const buildUp = (tiles: Tile[]) => {
       currentSides[currentLine === 0 ? 1 : 2],
       others
     );
-    // debugger;
     if (!found) {
       current = res[currentLine][0];
       currentLine += 1;
@@ -302,19 +313,40 @@ const buildUp = (tiles: Tile[]) => {
     // } else {
     // }
   } while (others.length > 0);
-  const s = res.map((l) => {
-    const lineTiles = l.map(R.prop('tiles'));
-    const res = lineTiles.forEach((tile) => {
-      tile.forEach((tileLine) => {
-        debugger;
+  const s = res.map((l) => l.map(R.prop('tiles')));
+  return s;
+};
+
+// strictEqual(findCornersSum(makeData(testData)), 20899048083289);
+// strictEqual(findCornersSum(makeData(data)), 64802175715999);
+
+const placedTiles = buildUp(makeData(testData));
+if (placedTiles) {
+  const withoutBorders = placedTiles.map((l) => {
+    return l.map((t) => {
+      const withoutTopBottom = t.slice(1, t.length - 1);
+      return withoutTopBottom.map((x) => {
+        return x.slice(1, x.length - 1);
       });
     });
   });
   debugger;
-  return res;
-};
-
-strictEqual(findCornersSum(makeData(testData)), 20899048083289);
-strictEqual(findCornersSum(makeData(data)), 64802175715999);
-
-buildUp(makeData(testData));
+  const xs = [];
+  for (let i = 0; i < withoutBorders.length; i++) {
+    const gridLine = withoutBorders[i];
+    const l: string[][] = [];
+    for (let ii = 0; ii < gridLine.length; ii++) {
+      const element = gridLine[ii];
+      for (let iii = 0; iii < element.length; iii++) {
+        if (!l[ii]) {
+          l[ii] = [];
+        }
+        // debugger;x
+        const r = element[iii];
+        l[ii].push(...r);
+      }
+    }
+    debugger;
+  }
+  console.log(placedTiles);
+}
