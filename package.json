@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.20",
-    "remeda": "0.0.27"
+    "remeda": "0.0.27",
+    "singlie": "^2.1.0"
   }
 }
