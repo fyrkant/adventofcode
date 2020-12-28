@@ -6,7 +6,7 @@ export const splitMap = <T>(
   input: string,
   mapFn: (x: string) => T,
   splitString = '\n'
-) => {
+): Array<T> => {
   return input.split(splitString).map(mapFn);
 };
 
@@ -14,7 +14,7 @@ export const replaceArrVal = (
   arr: number[],
   index: number,
   newVal?: number
-) => {
+): number[] => {
   return arr
     .slice(0, index)
     .concat(newVal ? newVal : [])

@@ -1,5 +1,4 @@
-import { strictEqual, deepStrictEqual } from 'assert';
-import _, { zipObject } from 'lodash';
+import * as R from 'remeda';
 import { data } from './data/17';
 import { splitMap } from '../utils';
 
@@ -10,148 +9,96 @@ const testData = `.#.
 ..#
 ###`;
 
-const makeEmptyLine = (len: number): string[] => _.times(len, _.constant('.'));
-
-const makeEmptyGrid = (len: number, lineLen = len): string[][] =>
-  _.times(len, () => makeEmptyLine(lineLen));
-
-const makeData = (input: string, pad: number): string[][] => {
-  const x = splitMap(input, (v) => [
-    ...new Array<string>(pad).fill('.'),
-    ...v.split(''),
-    ...new Array<string>(pad).fill('.'),
-  ]);
-  const y = [
-    ..._.times(pad, () => makeEmptyLine(x.length + pad * 2)),
-    ...x,
-    ..._.times(pad, () => makeEmptyLine(x.length + pad * 2)),
-  ];
-
-  return y;
+const makeData = (input: string): string[][] => {
+  return splitMap(input, (v) => v.split(''));
 };
 
-deepStrictEqual(
-  makeData(testData, 3)
-    .map((l) => l.join(''))
-    .join('\n')
-    .toString(),
-  `.........
-.........
-.........
-....#....
-.....#...
-...###...
-.........
-.........
-.........`
-);
-
-const getFromDelta = (
-  grid: string[][],
-  [newLineIndex, newCubeIndex]: [number, number]
-): string | false => {
-  const newLine = grid[newLineIndex];
-  if (!newLine) return false;
-  const newCube = newLine[newCubeIndex];
-  if (!newCube) return false;
-
-  return newCube;
+const getCubeFromCoords = (
+  dimension: string[][][][],
+  w: number,
+  z: number,
+  y: number,
+  x: number
+): '.' | '#' => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return R.pathOr(dimension as any, [w, z, y, x] as any, '.');
 };
 
-const countSurroundingCubes2d = (
-  zDelta: number,
-  arr: string[][],
-  lineIndex: number,
-  cubeIndex: number
+const countSurrounding = (
+  dimension: string[][][][],
+  w: number,
+  z: number,
+  y: number,
+  x: number
 ) => {
-  const deltas = [
-    [-1, -1],
-    [-1, 0],
-    [-1, 1],
-    [0, -1],
-    [0, 0],
-    [0, 1],
-    [1, -1],
-    [1, 0],
-    [1, 1],
-  ];
-
-  return deltas.reduce((p, [newLineIndex, newCubeIndex]) => {
-    if (zDelta === 0 && newLineIndex === 0 && newCubeIndex === 0) {
-      return p;
-    }
-    const newCube = getFromDelta(arr, [
-      lineIndex + newLineIndex,
-      cubeIndex + newCubeIndex,
-    ]);
-    if (!newCube) return p;
-
-    return newCube === active ? p + 1 : p;
-  }, 0 as number);
-};
-
-const countSurroundingCubes3d = (
-  dimension: string[][][],
-  zIndex: number,
-  lineIndex: number,
-  cubeIndex: number
-) => {
-  const zDeltas = [-1, 0, 1];
   let count = 0;
-  zDeltas.forEach((zDelta) => {
-    const grid = dimension[zIndex + zDelta];
-    // if (zDelta !== 0 && dimension.length < 4) {
-    //   const initialGrid = dimension[1];
 
-    //   count =
-    //     count + countSurroundingCubes2d(initialGrid, lineIndex, cubeIndex);
-    // } else
-    if (grid) {
-      count += countSurroundingCubes2d(zDelta, grid, lineIndex, cubeIndex);
+  for (let deltaW = w - 1; deltaW < w + 2; deltaW++) {
+    for (let deltaZ = z - 1; deltaZ < z + 2; deltaZ++) {
+      for (let deltaY = y - 1; deltaY < y + 2; deltaY++) {
+        for (let deltaX = x - 1; deltaX < x + 2; deltaX++) {
+          if (!(deltaX === x && deltaY === y && deltaZ === z && deltaW === w)) {
+            const cube = getCubeFromCoords(
+              dimension,
+              deltaW,
+              deltaZ,
+              deltaY,
+              deltaX
+            );
+            count = count + (cube === active ? 1 : 0);
+          }
+        }
+      }
     }
-  });
+  }
 
   return count;
 };
 
-const makePocketDimension = (startingDimension: string[][][]): string[][][] => {
-  const lineLength = startingDimension[startingDimension.length - 1].length;
-  const dimension = [
-    makeEmptyGrid(lineLength),
-    ..._.cloneDeep(startingDimension),
-    makeEmptyGrid(lineLength),
-  ];
-  const result: string[][][] = [];
-  debugger;
-  for (let i = 0; i < startingDimension.length + 2; i++) {
-    result.push(makeEmptyGrid(lineLength));
-  }
-  debugger;
-  for (let zIndex = 0; zIndex < dimension.length; zIndex++) {
-    const grid = dimension[zIndex];
-    for (let lineIndex = 0; lineIndex < grid.length; lineIndex++) {
-      const cubes = grid[lineIndex];
-      for (let cubeIndex = 0; cubeIndex < cubes.length; cubeIndex++) {
-        const cube = cubes[cubeIndex];
+const makePocketDimension = (dimension: string[][][][]): string[][][][] => {
+  const result: string[][][][] = [[[[]]]];
 
-        const surroundingActiveCubeCount = countSurroundingCubes3d(
-          dimension,
-          zIndex,
-          lineIndex,
-          cubeIndex
-        );
-        let newStatus = null;
-        if (cube === active) {
-          newStatus =
-            surroundingActiveCubeCount === 2 || surroundingActiveCubeCount === 3
-              ? active
-              : inactive;
-        } else {
-          newStatus = surroundingActiveCubeCount === 3 ? active : inactive;
-        }
-        result[zIndex][lineIndex][cubeIndex] = newStatus;
-        if (newStatus === active) {
-          debugger;
+  for (let wIndex = 0; wIndex < dimension.length + 2; wIndex++) {
+    result[wIndex] = [];
+    for (let zIndex = 0; zIndex < dimension[0].length + 2; zIndex++) {
+      result[wIndex][zIndex] = [];
+      for (
+        let lineIndex = 0;
+        lineIndex < dimension[0][0].length + 2;
+        lineIndex++
+      ) {
+        result[wIndex][zIndex][lineIndex] = [];
+        for (
+          let cubeIndex = 0;
+          cubeIndex < dimension[0][0][0].length + 2;
+          cubeIndex++
+        ) {
+          const cube = getCubeFromCoords(
+            dimension,
+            wIndex - 1,
+            zIndex - 1,
+            lineIndex - 1,
+            cubeIndex - 1
+          );
+
+          const surroundingActiveCubeCount = countSurrounding(
+            dimension,
+            wIndex - 1,
+            zIndex - 1,
+            lineIndex - 1,
+            cubeIndex - 1
+          );
+          let newStatus = null;
+          if (cube === active) {
+            newStatus =
+              surroundingActiveCubeCount === 2 ||
+              surroundingActiveCubeCount === 3
+                ? active
+                : inactive;
+          } else {
+            newStatus = surroundingActiveCubeCount === 3 ? active : inactive;
+          }
+          result[wIndex][zIndex][lineIndex][cubeIndex] = newStatus;
         }
       }
     }
@@ -160,41 +107,14 @@ const makePocketDimension = (startingDimension: string[][][]): string[][][] => {
   return result;
 };
 
-const countAll = (xs: string[][][]): number => {
-  return xs.reduce((pg, g) => {
-    return (
-      pg +
-      g.reduce((pl, l) => {
-        return (
-          pl +
-          l.reduce((pc, c) => {
-            return pc + (c === active ? 1 : 0);
-          }, 0)
-        );
-      }, 0)
-    );
-  }, 0);
-};
-
-// console.log('all', countAll([makeData(testData, 3)]));
-
 const runCyclesAndCount = (input: string, cycles: number) => {
-  let d = [makeData(input, 40)];
+  let d: string[][][][] = [[makeData(input)]];
 
-  console.log(countAll(d));
-  _.times(cycles, () => {
-    debugger;
+  R.times(cycles, () => {
     d = makePocketDimension(d);
-    console.log(countAll(d));
   });
 
-  return countAll(d);
+  return R.flattenDeep(d).filter((x) => x === active).length;
 };
 
 console.log(runCyclesAndCount(data, 6));
-
-// console.log(
-//   makePocketDimension([makeData(testData, 6)])
-//     .map((grid) => grid.map((line) => line.join('')).join('\n'))
-//     .join('\n\n')
-// );
