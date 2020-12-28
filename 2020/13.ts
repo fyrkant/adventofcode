@@ -1,8 +1,6 @@
 import { strictEqual } from 'assert';
 import { data } from './data/13';
 
-import { splitMap } from '../utils';
-
 const parseLine = (input: string) => {
   return parseInt(input, 10);
 };
@@ -32,17 +30,7 @@ const getBuses = (input: string): [number, number][] => {
   return ret;
 };
 
-// strictEqual(getBuses("17,x,13,19"), [[17, 0], [13, 2], [19, 3]]);
-
 type Data = ReturnType<typeof makeData>;
-
-const testData = `939
-7,13,x,x,59,x,31,19`;
-
-// strictEqual(
-//   makeData(testData),
-//   [939, [7, 13, 59, 31, 19]],
-// );
 
 const getEarliestBus = (input: Data) => {
   const [departure, buses] = input;
@@ -68,93 +56,38 @@ const getEarliestBus = (input: Data) => {
   }
 };
 
-// strictEqual(getEarliestBus(makeData(testData)), 295);
 strictEqual(getEarliestBus(makeData(data)), 222);
 
-const allMatch = (
-  timestamp: number,
-  os: number,
-  buses: ReturnType<typeof getBuses>
-): boolean => {
-  for (let index = 0; index < buses.length; index++) {
-    const [id, offset] = buses[index];
-    if ((timestamp + offset - os) % id === 0) {
-      return false;
-    }
-  }
-  return true;
-  // return buses.every(([id, offset]) => (timestamp + offset - os) % id === 0);
+const getFirstBusTime = (
+  start: number,
+  increment: number,
+  busTime: number,
+  offset: number
+): number => {
+  let t = start;
+  do {
+    t += increment;
+  } while ((t + offset) % busTime !== 0);
+  return t;
 };
 
-const doAllMatch = (os: number, buses: ReturnType<typeof getBuses>) => (
-  timestamp: number
-): boolean => {
-  const strs = [];
-  for (let index = 0; index < buses.length; index++) {
-    const [id, offset] = buses[index];
-    strs.push(`(timestamp + ${offset} - ${os}) % ${id} === 0`);
-    // if ((timestamp + offset - os) % id === 0) {
-    //   return false;
-    // }
-  }
-  console.log(strs.join(''));
-  return true;
-  // return buses.every(([id, offset]) => (timestamp + offset - os) % id === 0);
+const findEarliestTimestamp = (buses: [number, number][]): number => {
+  let timestamp = 0;
+  let increment = buses[0][0];
+  buses.slice(1).forEach(([busTime, offset]) => {
+    timestamp = getFirstBusTime(timestamp, increment, busTime, offset);
+    increment *= busTime;
+  });
+
+  return timestamp;
 };
 
-const nextTick = () => {
-  return new Promise<void>((res) => process.nextTick(() => res()));
-};
-
-const findEarliestTimestamp = (start: number): number => {
-  const initial = 29;
-  console.log({ initial });
-  let timestamp = start;
-  let count = 0;
-  while (true) {
-    count++;
-    // if (count > 1000000000) {
-    //   console.log('OVER!!!!', { timestamp: timestamp - initial[1], count });
-    //   return timestamp;
-    // }
-    if (count % 1000000000 === 0) {
-      // console.log(`    timestamp: ${timestamp} count: ${count}\r`);
-      process.stdout.write(`    timestamp: ${timestamp} count: ${count}\r`);
-    }
-    if (
-      (timestamp + 0) % 29 === 0 &&
-      (timestamp + 23) % 37 === 0 &&
-      (timestamp + 29) % 409 === 0 &&
-      (timestamp + 46) % 17 === 0 &&
-      (timestamp + 47) % 13 === 0 &&
-      (timestamp + 48) % 19 === 0 &&
-      (timestamp + 52) % 23 === 0 &&
-      (timestamp + 60) % 353 === 0 &&
-      (timestamp + 101) % 41 === 0
-    ) {
-      console.log('WOW!!!', { timestamp: timestamp - initial, count });
-      return timestamp - initial;
-    }
-    timestamp += initial;
-  }
-};
-
-const doFindEarliest = (start?: number) => {
-  debugger;
-
-  return findEarliestTimestamp(start || 29);
-};
-const run = () => {
-  // strictEqual(await doFindEarliest('17,x,13,19'), 3417);
-  // strictEqual(await doFindEarliest('67,7,59,61'), 754018);
-  // strictEqual(await doFindEarliest('67,x,7,59,61'), 779210);
-  // strictEqual(await doFindEarliest('67,7,x,59,61'), 1261476);
-  // strictEqual(await doFindEarliest('1789,37,47,1889'), 1202161486);
-  // strictEqual(doFindEarliest(data.split("\n")[1], 100000000000000), 1202161486);
-
-  const x = doFindEarliest(99999999999971);
-  console.log(x);
-};
-
-run();
-// strictEqual(findEarliestTimestamp(29000000000, getBuses(data)), 123);
+strictEqual(findEarliestTimestamp(getBuses('17,x,13,19')), 3417);
+strictEqual(findEarliestTimestamp(getBuses('67,7,59,61')), 754018);
+strictEqual(findEarliestTimestamp(getBuses('67,x,7,59,61')), 779210);
+strictEqual(findEarliestTimestamp(getBuses('67,7,x,59,61')), 1261476);
+strictEqual(findEarliestTimestamp(getBuses('1789,37,47,1889')), 1202161486);
+strictEqual(
+  findEarliestTimestamp(getBuses(data.split('\n')[1])),
+  408270049879073
+);
