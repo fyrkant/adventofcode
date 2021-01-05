@@ -2,104 +2,121 @@ import { strictEqual } from 'assert';
 import { data } from './data/18';
 import { splitMap } from '../utils';
 
-const testData = '1 + 2 * 3 + 4 * 5 + 6'; // 71
-const testData2 = '1 + (2 * 3) + (4 * (5 + 6))'; // 51
-const testData3 = '5 + (8 * 3 + 9 + 3 * 4 * 3)'; // 437
-const testData4 = '((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2'; // 13632
+const testData = '1 + 2 * 3 + 4 * 5 + 6';
+const testData2 = '1 + (2 * 3) + (4 * (5 + 6))';
+const testData3 = '5 + (8 * 3 + 9 + 3 * 4 * 3)';
+const testData4 = '((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2';
 
-const numberRegex = /[0-9]/;
+const leftToRight = (input: string[]) => {
+  let left = '';
 
-const removeSubstring = (input: string, index: number) => {
-  return input.slice(0, index) + input.slice(index + 1, input.length);
-};
-
-const findAllGroups = (input: string, operators: string[]) => {
-  const res = [];
-  let parens = 0;
-  let currentChunk = '';
-  for (let index = 0; index < input.length; index++) {
-    // debugger;
-    const currentChar = input[index];
-    if (currentChar === '(') {
-      if (parens !== 0 && currentChunk !== '') {
-        res.push(currentChunk);
-        currentChunk = '';
-      }
-      parens++;
-    } else if (currentChar === ')') {
-      if (parens > 0) {
-        res.push(currentChunk);
-        currentChunk = '';
-      }
-      parens--;
+  for (let i = 0; i < input.length; i++) {
+    const element = input[i];
+    if (element === '+6') {
+      debugger;
     }
-    if (parens === 0 && operators.includes(currentChar)) {
-      res.push(currentChunk + currentChar);
-      currentChunk = '';
-    } else if (
-      currentChar !== '(' &&
-      currentChar !== ')' &&
-      currentChar !== ' '
-    ) {
-      currentChunk += currentChar;
+    const lastInChunk = left[left.length - 1];
+    if (left === '') {
+      left += element;
+    } else if (operators.includes(element)) {
+      left += element;
+    } else if (operators.includes(lastInChunk)) {
+      const operator = lastInChunk;
+      const leftSide = left.substr(0, left.length - 1);
+      const l = parseInt(leftSide, 10);
+      const r = parseInt(element, 10);
+      left = String(operator === '*' ? l * r : l + r);
     }
   }
-  if (currentChunk !== '') {
-    res.push(currentChunk);
-  }
-  return res;
+  return parseInt(left, 10);
 };
 
-const tryEval = (input: string) => {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return,no-eval,@typescript-eslint/no-unsafe-return
-    return eval(input);
-  } catch (error) {
-    return false;
+const doThing = (operator: '*' | '+') => (input: string[]): string[] => {
+  const plusIndex = input.indexOf(operator);
+
+  if (plusIndex === -1) {
+    return input;
   }
+  const one = input[plusIndex - 1];
+  const two = input[plusIndex + 1];
+
+  const sum =
+    operator === '+'
+      ? parseInt(one, 10) + parseInt(two, 10)
+      : parseInt(one, 10) * parseInt(two, 10);
+
+  const newArr = [
+    ...input.slice(0, plusIndex - 1),
+    String(sum),
+    ...input.slice(plusIndex + 2),
+  ];
+
+  return doThing(operator)(newArr);
 };
+
+const doAddition = doThing('+');
+const doMultiplication = doThing('*');
+
+const doItInWeirdOrder = (input: string[]) =>
+  parseInt(doMultiplication(doAddition(input))[0], 10);
+
 const operators = ['+', '*'];
-const parseLine = (input: string) => {
+
+const doIt = (input: string[], mathFun: (xs: string[]) => number): number => {
+  const lastOpenParenIndex = input.lastIndexOf('(');
+
+  if (lastOpenParenIndex === -1) {
+    return mathFun(input);
+  }
+
+  const correspondingClosingParens = input.indexOf(')', lastOpenParenIndex);
+  const betweenParens = input.slice(
+    lastOpenParenIndex + 1,
+    correspondingClosingParens
+  );
+  const num = mathFun(betweenParens);
+
+  const newArr = [
+    ...input.slice(0, lastOpenParenIndex),
+    String(num),
+    ...input.slice(correspondingClosingParens + 1),
+  ];
+
+  return doIt(newArr, mathFun);
+};
+
+const parseLinePartOne = (input: string) => {
   const noSpace = input.replace(/\s/g, '');
   const arr = noSpace.split('');
-  const splat = findAllGroups(input, operators)
-    .filter((x) => x !== '')
-    .reverse();
-  debugger;
-  let prev;
-  let acc = 0;
-  for (let index = 0; index < splat.length; index++) {
-    const element = splat[index];
-    debugger;
-    let curr;
-    if (element.length === 3) {
-      const [one, operator, two] = element;
-      curr =
-        operator === '*'
-          ? parseInt(one, 10) * parseInt(two, 10)
-          : parseInt(one, 10) + parseInt(two, 10);
-      if (prev) {
-        acc = prev === '*' ? curr * acc : curr + acc;
-      } else {
-        acc = curr;
-      }
-    } else if (element.length === 2) {
-      const [one, operator] = element;
-      acc = operator === '*' ? parseInt(one) * acc : parseInt(one) + acc;
-    } else if (element.length === 1) {
-      prev = element;
-    }
-  }
-
-  debugger;
-  return acc;
+  return doIt(arr, leftToRight);
 };
 
-strictEqual(parseLine(testData), 71);
-// strictEqual(testData2, 51);
-// strictEqual(testData3, 437);
-// strictEqual(testData4, 13632);
-
-const makeData = (input: string) => {
-  return splitMap(input, parseLine);
+const parseLinePartTwo = (input: string) => {
+  const noSpace = input.replace(/\s/g, '');
+  const arr = noSpace.split('');
+  return doIt(arr, doItInWeirdOrder);
 };
+
+strictEqual(parseLinePartOne(testData), 71);
+strictEqual(parseLinePartOne(testData2), 51);
+strictEqual(parseLinePartOne(testData3), 437);
+strictEqual(parseLinePartOne(testData4), 13632);
+
+strictEqual(parseLinePartTwo('2 * 3 + (4 * 5)'), 46);
+strictEqual(parseLinePartTwo(testData2), 51);
+strictEqual(parseLinePartTwo('5 + (8 * 3 + 9 + 3 * 4 * 3)'), 1445);
+strictEqual(
+  parseLinePartTwo('5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))'),
+  669060
+);
+strictEqual(
+  parseLinePartTwo('((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2'),
+  23340
+);
+
+const makeData = (input: string, parseLineFn: (xs: string) => number) =>
+  splitMap(input, parseLineFn);
+
+const partOne = makeData(data, parseLinePartOne).reduce((p, c) => p + c, 0);
+const partTwo = makeData(data, parseLinePartTwo).reduce((p, c) => p + c, 0);
+console.log({ partOne, partTwo });
