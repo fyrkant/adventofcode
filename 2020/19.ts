@@ -92,40 +92,78 @@ const doWitWithTheArrayThing = (xs: [string, string][]): [string, string][] => {
   return x;
 };
 
-const parseRules = (input: string): RegExp | false => {
-  let array: [string, string][] = input
-    .split('\n')
-    .map((l) => {
-      const [n, r] = l.split(':');
+const hello = (input: [string, string][]) => {};
 
-      return [n, r];
-    })
-    .sort(([a], [b]) => {
-      return parseInt(a, 10) - parseInt(b, 10);
-    });
-  debugger;
-  array.forEach(([n, r]) => {
-    const reg = new RegExp(n, 'g');
-    // debugger;
-    array = array.map(([n, l]) => {
-      return [n, l.replace(reg, `(${r})`)];
-    });
-  });
-  debugger;
-  array.forEach(([n, r]) => {
-    const reg = new RegExp(n, 'g');
-    // debugger;
-    array = array.map(([n, l]) => {
-      return [n, l.replace(reg, `(${r})`)];
-    });
-  });
-  debugger;
-  array = array.map(([n, r]) => [n, r.replace(/\s/g, '').replace(/\"/g, '')]);
-  const zero = array.find(([n, r]) => {
-    return n === '0';
+const getAB = (m: Map<string, string[][]>): [string, string] => {
+  let a = '';
+  let b = '';
+  for (const x of m) {
+    const [k, v] = x;
+    if (v[0][0] === '"a"') {
+      a = k;
+    }
+    if (v[0][0] === '"b"') {
+      b = k;
+    }
+    if (a && b) {
+      return [a, b];
+    }
+  }
+  return [a, b];
+};
+
+const parseRules = (input: string) => {
+  const map = new Map<string, string[][]>();
+  input.split('\n').forEach((l) => {
+    const [n, r] = l.split(':');
+
+    const rArr = r
+      .split('|')
+      .map((num) => num.split(' ').filter((x) => x !== ''));
+    map.set(n, rArr);
   });
 
-  return zero ? new RegExp(`^${zero[1]}$`) : false;
+  const [a, b] = getAB(map);
+
+  for (const x of map) {
+    const [k, v] = x;
+
+    const newV = v.map((i) => {
+      debugger;
+      return i.map((y) => {
+        if (y === a) {
+          return '"a"';
+        } else if (y === b) {
+          return '"b"';
+        } else {
+          return map.get(y);
+        }
+      });
+    });
+    map.set(k, newV);
+  }
+  debugger;
+  // array.forEach(([n, r]) => {
+  //   const reg = new RegExp(n, 'g');
+  //   // debugger;
+  //   array = array.map(([n, l]) => {
+  //     return [n, l.replace(reg, `(${r})`)];
+  //   });
+  // });
+  // debugger;
+  // array.forEach(([n, r]) => {
+  //   const reg = new RegExp(n, 'g');
+  //   // debugger;
+  //   array = array.map(([n, l]) => {
+  //     console.log({ n, l });
+  //     return [n, l.replace(reg, `(${r})`)];
+  //   });
+  // });
+  // debugger;
+  // array = array.map(([n, r]) => [n, r.replace(/\s/g, '').replace(/"/g, '')]);
+  // const zero = array[0];
+
+  // return zero ? new RegExp(`^${zero[1]}$`) : false;
   // let rules = new Map<number, string>();
 
   // for (let index = 0; index < array.length; index++) {
@@ -151,6 +189,7 @@ const parseRules = (input: string): RegExp | false => {
 const makeData = (input: string) => {
   const [rulesString, messagesString] = input.split('\n\n');
   const ruleRegex = parseRules(rulesString);
+  debugger;
   if (!ruleRegex) {
     console.log('nope');
     return;
@@ -159,4 +198,5 @@ const makeData = (input: string) => {
   console.log(messages.length);
 };
 
-const testD = makeData(data);
+// const testD = makeData(testDataString);
+const testD2 = makeData(data);
