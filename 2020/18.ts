@@ -31,28 +31,30 @@ const leftToRight = (input: string[]) => {
   return parseInt(left, 10);
 };
 
-const doThing = (operator: '*' | '+') => (input: string[]): string[] => {
-  const plusIndex = input.indexOf(operator);
+const doThing =
+  (operator: '*' | '+') =>
+  (input: string[]): string[] => {
+    const plusIndex = input.indexOf(operator);
 
-  if (plusIndex === -1) {
-    return input;
-  }
-  const one = input[plusIndex - 1];
-  const two = input[plusIndex + 1];
+    if (plusIndex === -1) {
+      return input;
+    }
+    const one = input[plusIndex - 1];
+    const two = input[plusIndex + 1];
 
-  const sum =
-    operator === '+'
-      ? parseInt(one, 10) + parseInt(two, 10)
-      : parseInt(one, 10) * parseInt(two, 10);
+    const sum =
+      operator === '+'
+        ? parseInt(one, 10) + parseInt(two, 10)
+        : parseInt(one, 10) * parseInt(two, 10);
 
-  const newArr = [
-    ...input.slice(0, plusIndex - 1),
-    String(sum),
-    ...input.slice(plusIndex + 2),
-  ];
+    const newArr = [
+      ...input.slice(0, plusIndex - 1),
+      String(sum),
+      ...input.slice(plusIndex + 2),
+    ];
 
-  return doThing(operator)(newArr);
-};
+    return doThing(operator)(newArr);
+  };
 
 const doAddition = doThing('+');
 const doMultiplication = doThing('*');

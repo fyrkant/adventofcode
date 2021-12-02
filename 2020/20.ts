@@ -285,9 +285,8 @@ const buildUp = (tiles: Tile[]) => {
       res[currentLine] = [];
     }
     const currentSides = getSides(current.tiles);
-    const currentIndex = res[currentLine === 0 ? 0 : currentLine - 1].indexOf(
-      current
-    );
+    const currentIndex =
+      res[currentLine === 0 ? 0 : currentLine - 1].indexOf(current);
     // if (currentLine === 0) {
     const found = findAndRotate(
       currentLine === 0 ? 'l' : 't',

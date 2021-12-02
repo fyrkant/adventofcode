@@ -1,2 +1,2 @@
 import { dataString } from './data/17';
-  import { strictEqual } from 'assert';
+import { strictEqual } from 'assert';
