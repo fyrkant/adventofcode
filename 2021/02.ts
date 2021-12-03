@@ -1,6 +1,6 @@
-import {  dataString } from './data/02';
-import {  strictEqual,  deepStrictEqual } from 'assert';
-import {  splitMap } from '../utils';
+import { dataString } from './data/02';
+import { strictEqual, deepStrictEqual } from 'assert';
+import { splitMap } from '../utils';
 
 type Direction = 'forward' | 'up' | 'down';
 
@@ -23,7 +23,7 @@ const doThings = (
   let vertical = 0;
 
   d.forEach(([d, n]) => {
-    console.log(d, n)
+    console.log(d, n);
     switch (d) {
       case 'forward':
         horizontal = horizontal + n;
@@ -54,11 +54,11 @@ const doThingsWithAim = (
   let aim = 0;
 
   d.forEach(([d, n]) => {
-    console.log(d, n)
+    console.log(d, n);
     switch (d) {
       case 'forward':
         horizontal = horizontal + n;
-        vertical = vertical + (aim * n)
+        vertical = vertical + aim * n;
 
         break;
       case 'up':
@@ -85,5 +85,4 @@ deepStrictEqual(doThingsWithAim(td), [15, 60]);
 deepStrictEqual(doThings(rd), [2003, 980]);
 deepStrictEqual(doThingsWithAim(rd), [2003, 905474]);
 
-console.log(2003 * 905474)
-
+console.log(2003 * 905474);

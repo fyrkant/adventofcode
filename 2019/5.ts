@@ -41,13 +41,15 @@ const compute = (input: number[], inputVal: number) => {
     let steps = 0;
 
     const [p1, p2, dest] = arr.slice(index + 1);
+    const [x, y, z] = parameters;
+
+    const v1 = x === IMMEDIATE_MODE ? p1 : arr[p1];
+    const v2 = y === IMMEDIATE_MODE ? p2 : arr[p2];
 
     console.log(opcode, parameters, p1, p2, dest);
     switch (opcode) {
       case 1: {
         const [x, y, z] = parameters;
-        const v1 = x === IMMEDIATE_MODE ? p1 : arr[p1];
-        const v2 = y === IMMEDIATE_MODE ? p2 : arr[p2];
         const sum = v1 + v2;
         const d = z === IMMEDIATE_MODE ? index + 3 : dest;
 
@@ -60,8 +62,6 @@ const compute = (input: number[], inputVal: number) => {
 
       case 2: {
         const [x, y, z] = parameters;
-        const v1 = x === IMMEDIATE_MODE ? p1 : arr[p1];
-        const v2 = y === IMMEDIATE_MODE ? p2 : arr[p2];
         const sum = v1 * v2;
         const d = z === IMMEDIATE_MODE ? index + 3 : dest;
 
@@ -81,18 +81,23 @@ const compute = (input: number[], inputVal: number) => {
       }
 
       case 4: {
-        const [a] = parameters;
-        const x = a === IMMEDIATE_MODE ? a : arr[p1];
-        console.log(`CODE: ${x} index: ${index}`);
+        const a = x === IMMEDIATE_MODE ? p1 : arr[p1];
+        console.log(`CODE: ${a} index: ${index}`);
         console.log(`OUTPUT! ${outputs.length}`);
 
-        if (outputs.length > 0 && x !== 0) {
-          return x;
+        if (outputs.length > 0 && a !== 0) {
+          return a;
         }
-        outputs.push(x);
+        outputs.push(a);
         steps = 2;
         break;
       }
+
+      // case 5:{
+      //   const [a, b] = parameters;
+      //   const ip1 = a === IMMEDIATE_MODE ? p1 : arr[p1]
+      //   const ip2 = a === IMMEDIATE_MODE ? p1 : arr[p1]
+      // }
 
       case 99: {
         return arr[0];
