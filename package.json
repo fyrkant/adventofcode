@@ -5,7 +5,7 @@
   "main": "assert.bundle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "prettier --write ./**/*.ts"
+    "lint": "eslint 20**/**/*.ts --fix"
   },
   "repository": {
     "type": "git",

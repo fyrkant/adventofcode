@@ -24,7 +24,7 @@ const findBestPosition = (input: number[]): number => {
 
   for (let index = min; index <= max; index++) {
     const distances = sorted
-      .map((n) => getIncreasing(Math.max(n, index) - Math.min(n, index)))
+      .map((n) => getIncreasing(Math.abs(n - index)))
       .reduce((p, c) => p + c, 0);
 
     map.set(index, distances);
