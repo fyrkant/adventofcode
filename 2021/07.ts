@@ -1,10 +1,10 @@
-import { dataString } from './data/07';
-import { strictEqual } from 'assert';
+import { dataString } from "./data/07.ts";
+// import { strictEqual } from 'assert';
 
-const testData = '16,1,2,0,4,2,7,1,2,14';
+const testData = "16,1,2,0,4,2,7,1,2,14";
 
 const handleData = (i: string): number[] =>
-  i.split(',').map((x) => parseInt(x, 10));
+  i.split(",").map((x) => parseInt(x, 10));
 
 const getIncreasing = (num: number) => {
   let sum = 0;
