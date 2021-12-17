@@ -21,6 +21,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
+  "deno.suggest.imports.autoDiscover": true,
+  "deno.suggest.autoImports": true,
   "deno.enable": true,
   "deno.lint": true,
   "deno.unstable": true,
