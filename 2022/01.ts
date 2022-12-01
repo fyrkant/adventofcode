@@ -1,5 +1,6 @@
 import { dataString } from "./data/01.ts";
 import { assertEquals } from "https://deno.land/std@0.166.0/testing/asserts.ts";
+import * as mod from "https://deno.land/std@0.166.0/collections/mod.ts";
 
 const testData = `1000
 2000
@@ -28,7 +29,7 @@ const parseData = (data: string) => {
 };
 
 const sumGroup = (group: number[]) => {
-  const sum = group.reduce((acc, curr) => acc + curr, 0);
+  const sum = mod.sumOf(group, (x) => x);
   return sum;
 };
 
