@@ -1,5 +1,5 @@
-import { dataString } from './data/01.ts';
-import { assert } from "https://deno.land/std@0.166.0/testing/asserts.ts";
+import { dataString } from "./data/01.ts";
+import { assertEquals } from "https://deno.land/std@0.166.0/testing/asserts.ts";
 
 const testData = `1000
 2000
@@ -14,38 +14,46 @@ const testData = `1000
 8000
 9000
 
-10000`
+10000`;
 
 const parseData = (data: string) => {
-  const groups = data.split('\n\n')
+  const groups = data.split("\n\n");
 
-  const parsedGroups = groups.map(group => {
-    const parsedGroup = group.split('\n').map(Number)
-    return parsedGroup
-  })
+  const parsedGroups = groups.map((group) => {
+    const parsedGroup = group.split("\n").map(Number);
+    return parsedGroup;
+  });
 
-  return parsedGroups
-}
-
+  return parsedGroups;
+};
 
 const sumGroup = (group: number[]) => {
-  const sum = group.reduce((acc, curr) => acc + curr, 0)
-  return sum
-}
+  const sum = group.reduce((acc, curr) => acc + curr, 0);
+  return sum;
+};
 
-const summed = parseData(dataString).map(sumGroup)
+const getSortedCalories = (input: string) => {
+  const summed = parseData(input).map(sumGroup);
 
-const sorted = summed.sort((a, b) => b-a)
+  const sorted = summed.sort((a, b) => b - a);
 
-const solvePart1 = () => {
-  return sorted[0]
-}
+  return sorted;
+};
 
-const solvePart2 = () => {
-  const [one, two, three] = sorted
+const solvePart1 = (input: string) => {
+  return getSortedCalories(input)[0];
+};
 
-  return one + two + three
-}
+const solvePart2 = (input: string) => {
+  const [one, two, three] = getSortedCalories(input);
 
-console.log('part 1', solvePart1())
-console.log('part 2', solvePart2())
+  return one + two + three;
+};
+
+Deno.test("testData", () => {
+  assertEquals(solvePart1(testData), 24000);
+  assertEquals(solvePart2(testData), 45000);
+});
+
+console.log("part 1", solvePart1(dataString));
+console.log("part 2", solvePart2(dataString));
