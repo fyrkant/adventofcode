@@ -1,14 +1,13 @@
-import { makeFiles } from './makeFile.ts';
+import { makeFiles } from "./makeFile.ts";
 
-const days: string[] = []
+const days: string[] = [];
 
-for (let i = 1; i <= 25; i++) {
-  days.push(i.toString().padStart(2, '0'));
+for (let i = 4; i <= 25; i++) {
+  days.push(i.toString().padStart(2, "0"));
 }
 
 console.log(days);
 
 days.forEach((day) => {
-  makeFiles('2022', day);
+  makeFiles("2022", day);
 });
-
