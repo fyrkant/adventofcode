@@ -14,6 +14,8 @@ const shapeMap = {
   Z: "scissors",
 } as const;
 
+const getShape = (x: string) => shapeMap[x as keyof typeof shapeMap];
+
 const shapePointMap = {
   rock: 1,
   paper: 2,
@@ -28,16 +30,14 @@ const parseRounds = (input: string): [string, string][] => {
   const lines = input.split("\n");
 
   return lines.map((l) => {
-    return l.split(" ").map((x) =>
-      shapeMap[x as keyof typeof shapeMap] || ""
-    ) as [string, string];
+    return l.split(" ").map((x) => x || "") as [string, string];
   });
 };
 
 Deno.test("parse", () => {
-  assertEquals(parseRounds(testData), [["rock", "paper"], ["paper", "rock"], [
-    "scissors",
-    "scissors",
+  assertEquals(parseRounds(testData), [["A", "Y"], ["B", "X"], [
+    "C",
+    "Z",
   ]]);
 });
 
@@ -62,41 +62,44 @@ const getRoundResult = (enemyShape: string, yourShape: string): number => {
 };
 
 const getLoosingShapePoint = (
-  result: 0 | 3 | 6,
+  wantedResult: string,
   enemyShape: string,
 ): string => {
-  if (result === 3) return enemyShape;
+  if (wantedResult === "draw") return enemyShape;
   switch (enemyShape) {
     case "rock": {
-      return result === 6 ? "paper" : "scissors";
+      return wantedResult === "win" ? "paper" : "scissors";
     }
     case "paper": {
-      return result === 6 ? "scissors" : "rock";
+      return wantedResult === "win" ? "scissors" : "rock";
     }
 
     case "scissors": {
-      return result === 6 ? "rock" : "paper";
+      return wantedResult === "win" ? "rock" : "paper";
     }
 
     default:
       return "";
   }
 };
-const getRoundTwoWantedResult = (yourShape: string): 0 | 3 | 6 => {
-  if (yourShape === "rock") return 0;
-  if (yourShape === "paper") return 3;
-  if (yourShape === "scissors") return 6;
+const getRoundTwoWantedResult = (
+  yourShape: string,
+): "draw" | "win" | "lose" => {
+  if (yourShape === "Y") return "draw";
+  if (yourShape === "Z") return "win";
 
-  return 0;
+  return "lose";
 };
 
 const getScorePartOne = (rounds: [string, string][]) => {
   let score = 0;
 
-  rounds.forEach(([enemyShape, yourShape]) => {
-    const yourPoint = getShapePoint(yourShape);
-    score += yourPoint + getRoundResult(enemyShape, yourShape);
-  });
+  rounds.map((x) => x.map((y) => getShape(y))).forEach(
+    ([enemyShape, yourShape]) => {
+      const yourPoint = getShapePoint(yourShape);
+      score += yourPoint + getRoundResult(enemyShape, yourShape);
+    },
+  );
 
   return score;
 };
@@ -104,22 +107,27 @@ const getScorePartOne = (rounds: [string, string][]) => {
 const getScorePartTwo = (rounds: [string, string][]) => {
   let score = 0;
 
-  rounds.forEach(([enemyShape, yourShape]) => {
-    const result = getRoundTwoWantedResult(yourShape);
-    const loosingShape = getLoosingShapePoint(result, enemyShape);
+  rounds.map(([x, y]) => {
+    return [getShape(x), getRoundTwoWantedResult(y)];
+  }).forEach(([enemyShape, wantedResult]) => {
+    const resultPoint = wantedResult === "draw"
+      ? 3
+      : wantedResult === "win"
+      ? 6
+      : 0;
+    const loosingShape = getLoosingShapePoint(wantedResult, enemyShape);
 
-    console.log({ result, loosingShape, p: getShapePoint(loosingShape) });
-
-    score = score + result + getShapePoint(loosingShape);
+    score = score + resultPoint + getShapePoint(loosingShape);
   });
 
   return score;
 };
 
-Deno.test("score", () => {
+Deno.test("part one", () => {
   assertEquals(getScorePartOne(parseRounds(testData)), 15);
   assertEquals(getScorePartOne(parseRounds(dataString)), 10994);
-
+});
+Deno.test("part two", () => {
   assertEquals(getScorePartTwo(parseRounds(testData)), 12);
-  assertEquals(getScorePartTwo(parseRounds(dataString)), 12);
+  assertEquals(getScorePartTwo(parseRounds(dataString)), 12526);
 });
