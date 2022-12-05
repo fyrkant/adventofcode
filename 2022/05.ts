@@ -18,26 +18,14 @@ const parseStacks = (input: string) => {
   const stacks = lines.slice(0, lines.length - 1);
 
   return stacks.reduce((p, c) => {
-    const x: string[] = [];
-    for (let index = 0; index < c.length;) {
-      const element = c.slice(index, index + 3);
-
-      x.push(element);
-
-      if (x.length === index + 3) {
-        index = index + 3;
-      } else {
-        index = index + 4;
-      }
-    }
+    const x = Array.from(c.match(/(\s{4}|\w{1})/g) || []);
 
     x.forEach((e, i) => {
       if (e.trim()) {
         if (!p[i + 1]) {
           p[i + 1] = [];
         }
-        const letter = e.replace("[", "").replace("]", "");
-        p[i + 1] = [letter, ...p[i + 1]];
+        p[i + 1] = [e, ...p[i + 1]];
       }
     });
 
