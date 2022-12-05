@@ -1,10 +1,13 @@
-import * as R from 'remeda';
-import { makeFiles } from './makeFile';
+import { makeFiles } from "./makeFile.ts";
 
-const days = R.range(2, 26).map((v) => v.toString().padStart(2, '0'));
+const days: string[] = [];
 
-// days.forEach((day) => {
-//   makeFiles('2021', day);
-// });
+for (let i = 4; i <= 25; i++) {
+  days.push(i.toString().padStart(2, "0"));
+}
 
-// makeFiles('2021', '25');
+console.log(days);
+
+days.forEach((day) => {
+  makeFiles("2022", day);
+});

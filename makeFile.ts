@@ -1,25 +1,30 @@
-import { existsSync, writeFileSync } from 'fs';
+import { existsSync } from "https://deno.land/std@0.88.0/fs/exists.ts";
 
-// const [year, day] = process.argv.slice(2);
+const write = (path: string, input: string) => {
+  const data = new TextEncoder().encode(input);
+
+  Deno.writeFileSync(path, data);
+};
 
 const makeFiles = (year: string, day: string): void => {
   if (!year || !day) {
-    throw new Error('you need to specify year and day');
+    throw new Error("you need to specify year and day");
   }
 
   const codeFilePath = `./${year}/${day}.ts`;
   const dataFilePath = `./${year}/data/${day}.ts`;
 
   if (existsSync(codeFilePath) || existsSync(dataFilePath)) {
-    throw new Error('some of those files already exist');
+    throw new Error("some of those files already exist");
   }
 
-  writeFileSync(
+  write(
     codeFilePath,
-    `import { dataString } from './data/${day}';
-  import { strictEqual } from 'assert';`
+    `import { dataString } from './data/${day}.ts';
+import { assertEquals } from "https://deno.land/std@0.166.0/testing/asserts.ts";
+import * as mod from "https://deno.land/std@0.166.0/collections/mod.ts";`,
   );
-  writeFileSync(dataFilePath, 'export const dataString = ``;');
+  write(dataFilePath, "export const dataString = ``;");
 };
 
 export { makeFiles };
