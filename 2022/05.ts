@@ -18,14 +18,9 @@ const parseStacks = (input: string) => {
   const stacks = lines.slice(0, lines.length - 1);
 
   return stacks.reduce((p, c) => {
-    const x = Array.from(c.match(/(\s{4}|\w{1})/g) || []);
-
-    x.forEach((e, i) => {
+    Array.from(c.match(/(\s{4}|\w{1})/g) || []).forEach((e, i) => {
       if (e.trim()) {
-        if (!p[i + 1]) {
-          p[i + 1] = [];
-        }
-        p[i + 1] = [e, ...p[i + 1]];
+        p[i + 1] = [e, ...(p[i + 1] || [])];
       }
     });
 
