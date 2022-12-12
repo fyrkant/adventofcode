@@ -17,11 +17,27 @@ K)L`;
 const parseToPairs = (input: string): [string, string][] => {
   const lines = input.split("\n");
 
-  return lines.map((l) => {
+  const ls: [string, string][] = lines.map((l) => {
     const [left, right] = l.split(")");
 
     return [left, right];
   });
+
+  for (let index = 0; index < ls.length; index++) {
+    const [_l, r] = ls[index];
+
+    const matchedIndex = ls.findIndex(([il]) => {
+      return il === r;
+    });
+
+    if (matchedIndex !== -1) {
+      const match = ls.splice(matchedIndex, 1);
+      ls.splice(index + 1, 0, ...match);
+    }
+  }
+
+  console.log(ls);
+  return ls;
 };
 
 const partOne = (input: [string, string][]) => {
@@ -40,7 +56,7 @@ const partOne = (input: [string, string][]) => {
     // console.log(d);
   });
 
-  console.log(d);
+  // console.log(d);
 
   return Object.values(d).flat().length;
 };
