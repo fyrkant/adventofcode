@@ -8,5 +8,5 @@
   "deno.codeLens.references": true,
   "deno.codeLens.test": true,
   "deno.codeLens.referencesAllFunctions": false,
-  "github.copilot.inlineSuggest.enable": false
+  "github.copilot.editor.enableAutoCompletions": false
 }

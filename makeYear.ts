@@ -9,5 +9,5 @@ for (let i = 1; i <= 25; i++) {
 console.log(days);
 
 days.forEach((day) => {
-  makeFiles("2023", day);
+  makeFiles("2024", day);
 });
